@@ -45,7 +45,7 @@ Using a security agent that is container-aware and can operate from within the c
    # a separate, dedicated quarantine instance managed by your IT team.
    ACR_NAME_QUARANTINE=$(az deployment group show -g rg-bu0001a0005 -n cluster-stamp --query properties.outputs.quarantineContainerRegistryName.value -o tsv)
    
-   # [Combined this takes about three minutes.]
+   # [Combined this takes about four minutes.]
    az acr import --source ghcr.io/fluxcd/kustomize-controller:v0.8.1 -t quarantine/fluxcd/kustomize-controller:v0.8.1 -n $ACR_NAME_QUARANTINE
    az acr import --source ghcr.io/fluxcd/source-controller:v0.8.1 -t quarantine/fluxcd/source-controller:v0.8.1 -n $ACR_NAME_QUARANTINE
    az acr import --source docker.io/falcosecurity/falco:0.27.0 -t quarantine/falcosecurity/falco:0.27.0 -n $ACR_NAME_QUARANTINE
@@ -56,7 +56,7 @@ Using a security agent that is container-aware and can operate from within the c
    az acr import --source docker.io/jettech/kube-webhook-certgen:v1.5.1 -t quarantine/jettech/kube-webhook-certgen:v1.5.1 -n $ACR_NAME_QUARANTINE
    ```
 
-   > For simplicity we are NOT importing images that are coming from Microsoft Container Registry (MCR). This is not an endorsement of the suitability of those images to be pulled without going through quarantine or depending public container registries for production runtime needs. All container images that you bring to the cluster should pass through your quarantine process. For transparency, images that we skipped importing are for [Open Service Mesh](./cluster-manifests/cluster-baseline-settings/osm/) and [CSI Secret Store](./cluster-manifests/cluster-baseline-settings/secrets-store-csi/). Both of these are [progressing to eventually be AKS add-ons in the cluster](https://aka.ms/aks/roadmap), and as such would have been pre-deployed to your cluster like other add-ons (E.g. Azure Policy and Azure Monitor) so you wouldn't need to bootstrap the cluster with them yourself. We recommend you do bring these into this import process, and once you've done that you can update the Azure Policy `allowedContainerImagesRegex` to remove `mcr.microsoft.com/.+` as a valid source of images, leaving just `<your acr instance>/live/.+` as the only valid source.
+   > For simplicity we are NOT importing images that are coming from Microsoft Container Registry's (MCR) `oss` repository. This is not an endorsement of the suitability of those images to be pulled without going through quarantine or depending public container registries for production runtime needs. All container images that you bring to the cluster should pass through your quarantine process. For transparency, images that we skipped importing are for [Open Service Mesh](./cluster-manifests/cluster-baseline-settings/osm/) and [CSI Secret Store](./cluster-manifests/cluster-baseline-settings/secrets-store-csi/). Both of these are [progressing to eventually be AKS add-ons in the cluster](https://aka.ms/aks/roadmap), and as such would have been pre-deployed to your cluster like other add-ons (E.g. Azure Policy, Azure Monitor, Azure AD Pod Identity) so you wouldn't need to bootstrap the cluster with them yourself. We recommend you do bring these into this import process, and once you've done that you can update the Azure Policy `allowedContainerImagesRegex` to remove `mcr.microsoft.com/oss/.+` as a valid source of images, leaving just `<your acr instance>/live/.+` as the only valid source.
 
 1. Run security audits on images.
 
@@ -82,7 +82,7 @@ Using a security agent that is container-aware and can operate from within the c
    # Get your Azure Container Registry service name
    ACR_NAME=$(az deployment group show -g rg-bu0001a0005 -n cluster-stamp --query properties.outputs.containerRegistryName.value -o tsv)
    
-   # [Combined this takes about three minutes.]
+   # [Combined this takes about four minutes.]
    az acr import --source quarantine/fluxcd/kustomize-controller:v0.8.1 -r $ACR_NAME_QUARANTINE -t live/fluxcd/kustomize-controller:v0.8.1 -n $ACR_NAME
    az acr import --source quarantine/fluxcd/source-controller:v0.8.1 -r $ACR_NAME_QUARANTINE -t live/fluxcd/source-controller:v0.8.1 -n $ACR_NAME
    az acr import --source quarantine/falcosecurity/falco:0.27.0 -r $ACR_NAME_QUARANTINE -t live/falcosecurity/falco:0.27.0 -n $ACR_NAME
