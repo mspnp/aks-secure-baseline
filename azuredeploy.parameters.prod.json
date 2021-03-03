@@ -9,25 +9,25 @@
       "value": "centralus"
     },
     "targetVnetResourceId": {
-      "value": "/subscriptions/[subscription id]/resourceGroups/rg-enterprise-networking-spokes/providers/Microsoft.Network/virtualNetworks/vnet-spoke-BU0001A0005-01"
+      "value": "/subscriptions/[subscription id]/resourceGroups/rg-enterprise-networking-spokes/providers/Microsoft.Network/virtualNetworks/vnet-spoke-BU0001A0005-01 - RESOURCEID_VNET_CLUSTERSPOKE"
     },
     "clusterAdminAadGroupObjectId": {
-      "value": "[guid--security-group-objectid-that-will-become-high-privileged-cluster-admin]"
+      "value": "[guid--security-group-objectid-that-will-become-high-privileged-cluster-admin - AADOBJECTID_GROUP_CLUSTERADMIN]"
     },
     "k8sControlPlaneAuthorizationTenantId": {
-      "value": "[guid--your-cluster-APIs-authorization-tenant-ID]"
+      "value": "[guid--your-cluster-APIs-authorization-tenant-ID - TENANTID_K8SRBAC]"
     },
     "appGatewayListenerCertificate": {
-      "value": "[base64 cert data]"
+      "value": "[base64 cert data - APP_GATEWAY_LISTENER_CERTIFICATE_BASE64]"
     },
     "aksIngressControllerCertificate": {
-      "value": "[base64 public cert data]"
+      "value": "[base64 public cert data - INGRESS_CONTROLLER_CERTIFICATE_BASE64]"
     },
     "jumpBoxImageResourceId": {
-      "value": "/subscriptions/[subscription id]/resourceGroups/rg-bu0001a0005/providers/Microsoft.Compute/images/img-aksopsjb-TIMESTAMP"
+      "value": "/subscriptions/[subscription id]/resourceGroups/rg-bu0001a0005/providers/Microsoft.Compute/images/img-aksopsjb-TIMESTAMP - RESOURCEID_IMAGE_JUMPBOX"
     },
     "jumpBoxCloudInitAsBase64": {
-      "value": "YOUR BASE64 ENCODED jumpBoxCloudInit.yml FILE STRING HERE"
+      "value": "YOUR BASE64 ENCODED jumpBoxCloudInit.yml FILE STRING HERE - CLOUDINIT_BASE64"
     }
   }
 }

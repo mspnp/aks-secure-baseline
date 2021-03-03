@@ -21,6 +21,7 @@ Following the steps below, you'll end up with a SSH public-key-based solution th
 
       ```bash
       ssh-keygen -t rsa -b 4096 -f opsuser01.key
+      cat opsuser01.key.pub
       ```
 
       > On Windows, as an alternative to bash in WSL, you can use a solution like PuTTYGen found in the [PuTTY installer](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html).
@@ -30,7 +31,7 @@ Following the steps below, you'll end up with a SSH public-key-based solution th
       Enter a passphrase when requested and note where the public and private key file was saved. The _public_ key file _contents_ (`opsuser01.key.pub` in the example above) is what is added to the `ssh-authorized-keys` array in `jumpBoxCloudInit.yml`. You'll need the username, the private key file (`opsuser01.key`), and passphrase later in this walkthrough.
 1. _Optional._ Remove the `- default` line to remove the default admin user from the jump box.
 
-   If you leave the `- default` line in the file, then the admin user (defined in the cluster's ARM template as pseudo-random name to discourage usage) will also exist on this jump box. We do not provide any instructions on setting up this default user to be a valid user you can access, and as such you might wish to simply remove it from the jump box. That user has unrestricted sudo access, by default. Unfortunately, you cannot directly deploy the jump box with this user removed, so removing it via cloud-init is a common resolution by not including `- default` in this file.
+   If you leave the `- default` line in the file, then the admin user (defined in the cluster's ARM template as pseudo-random name to discourage usage) will also exist on this jump box. We do not provide any instructions on setting up this default user to be a valid user you can access, and as such you might wish to simply remove it from the jump box. That user has unrestricted sudo access, by default. Unfortunately, you cannot directly deploy the jump box infrastructure with this user removed, so removing it via cloud-init is a common resolution -- by not including `- default` in this file.
 1. Save the `jumpBoxCloudInit.yml` file. You _cannot_ use the provided example keys in this file as you do not have the private key to go with them, **you must update this file following the instructions above or you will not be able to complete this walkthrough.**
 1. You can commit this file change if you wish, as the only values in here are public keys, which are not secrets. **Never commit any private SSH keys.**
 

@@ -474,6 +474,7 @@
                                             "Microsoft.Compute/images",
                                             "Microsoft.Compute/virtualMachineScaleSets",
                                             "Microsoft.ContainerRegistry/registries",
+                                            "Microsoft.ContainerRegistry/registries/agentPools",
                                             "Microsoft.ContainerRegistry/registries/replications",
                                             "Microsoft.ContainerService/managedClusters",
                                             "Microsoft.Insights/activityLogAlerts",

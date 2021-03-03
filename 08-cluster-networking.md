@@ -28,7 +28,7 @@ Your `rg-enterprise-networking-spokes` will be populated with the dedicated regi
 
 1. Update the regional hub deployment to account for the runtime requirements of the virtual network.
 
-   This is an evolution of same hub template you used before, but now updated with Azure Firewall rules specific to this AKS Cluster infrastructure.
+   This is an evolution of same hub template you used before, but now updated with Azure Firewall rules specific to this AKS cluster infrastructure.
 
    > :eyes: If you're curious to see what changed in the regional hub, [view the diff](https://diffviewer.azureedge.net/?l=https://raw.githubusercontent.com/mspnp/aks-secure-baseline/regulated/networking/hub-region.v1.json&r=https://raw.githubusercontent.com/mspnp/aks-secure-baseline/regulated/networking/hub-region.v2.json).
 

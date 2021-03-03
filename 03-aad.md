@@ -10,7 +10,7 @@ We are giving this cluster a generic identifier that we'll use to build relation
 
 AKS provides a separation between Azure management control plane access control and Kubernetes control plane access control. This deployment process, creating and associating Azure resources with each other, is an example of Azure management control plane access. This is a relationship between your Azure AD tenant associated with your Azure subscription and is what grants you the permissions to create networks, clusters, managed identities, and create relationships between them. Kubernetes has it's own control plane, exposed via the Cluster API endpoint, and honors the Kubernetes RBAC authorization model. This endpoint is where `kubectl` commands are executed against, for example.
 
-AKS allows for disparate tenants between these two control planes; one tenant can be used for Azure management control plane and another for Cluster API authorization. You can also use the same tenant for both. Regulated environments often have clear tenant separation to address impact radius and potential lateral movement; at the added complexity of managing multiple identity stores. This reference implementation will work with either model. If you're using a single tenant while going through this, you may be able to skip some steps (they'll be identified as such). Ensure your final implementation is aligned with how your organization and complice requirements dictate identity management.
+AKS allows for disparate Azure AD tenants between these two control planes; one tenant can be used for Azure management control plane and another for Cluster API authorization. You can also use the same tenant for both. Regulated environments may mandate a clear tenant separation to address impact radius and potential lateral movement; at the significant added complexity and cost of managing multiple identity stores. This reference implementation will work with either model. Most customers, even in regulated environments, use a single Azure AD tenant model. Ensure your final implementation is aligned with how your organization and compliance requirements dictate identity management.
 
 ## Expected results
 
@@ -33,7 +33,7 @@ Following the steps below you will result in an Azure AD configuration that will
 
 1. Log in to the tenant where Kubernetes Cluster API authorization will be associated with.
 
-   Capture the Azure AD Tenant ID that will be associated with your cluster's Kubernetes RBAC for Cluster API access.
+   Capture the Azure AD Tenant ID that will be associated with your cluster's Kubernetes RBAC for Cluster API access. This is _typically_ the same tenant as your Azure RBAC, see [Azure AD tenant selection](#Azure-AD-tenant-selection) above for more details. However, if you do not have access to manage Azure AD groups and permissions, you may create a temporary tenant specifically for this walkthrough so that you're not blocked at this point.
 
    ```bash
    az login -t <Replace-With-ClusterApi-AzureAD-TenantId> --allow-no-subscriptions
@@ -44,7 +44,7 @@ Following the steps below you will result in an Azure AD configuration that will
 
    If you already have a security group that is appropriate for your cluster's admin service accounts, use that group and skip this step. If using your own group or your Azure AD administrator created one for you to use; you will need to update the group name throughout the reference implementation.
 
-   > :warning: This cluster role is the highest-privileged role available in Kubernetes. Members of this group will have _complete access throughout the cluster_. Generally speaking, there should be **no standing access** at this level; ideally implementing JIT AD group membership when necessary. In the next step, you'll create a dedicated account for this highly-privileged, administrative role. Ensure your all of your cluster's RBAC assignments and memberships are maliciously managed and auditable; aligning to minimal standing permissions and all other organization & compliance requirements.
+   > :warning: This cluster role is the highest-privileged role available in Kubernetes. Members of this group will have _complete access throughout the cluster_. Generally speaking, there should be **no standing access** at this level; and access is [implemented using Just-In-Time AD group membership](https://docs.microsoft.com/azure/aks/managed-aad#configure-just-in-time-cluster-access-with-azure-ad-and-aks) (_Requires Azure AD PIM found in Premium P2 SKU._). In the next step, you'll create a dedicated account for this highly-privileged, administrative role for this walkthrough. Ensure your all of your cluster's RBAC assignments and memberships are maliciously managed and auditable; aligning to minimal or no standing admin permissions and all other organization & compliance requirements.
 
    ```bash
    AADOBJECTNAME_GROUP_CLUSTERADMIN=cluster-admins-bu0001a000500
