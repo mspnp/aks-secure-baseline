@@ -45,8 +45,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
    ```bash
    KEYVAULT_NAME=$(az deployment group show --resource-group rg-bu0001a0005 -n cluster-stamp --query properties.outputs.keyVaultName.value -o tsv)
 
-   sed -i "s/KEYVAULT_NAME/{$KEYVAULT_NAME}/" ingress-controller/akv-tls-provider.yaml
-   sed -i "s/KEYVAULT_TENANT/${TENANTID_AZURERBAC}/" ingress-controller/akv-tls-provider.yaml
+   sed -i -e "s/KEYVAULT_NAME/${KEYVAULT_NAME}/" -e "s/KEYVAULT_TENANT/${TENANTID_AZURERBAC}/" ingress-nginx/akv-tls-provider.yaml
 
    git commit -a -m "Update SecretProviderClass to reference my ingress wildcard certificate."
    ```
@@ -69,11 +68,13 @@ Your github repo will be the source of truth for your cluster's configuration. T
    5. Click the name of any of the two listed instances. E.g. **vmss-jumpboxes_0**
    6. Click **Connect** -> **Bastion** -> **Use Bastion**.
    7. Fill in the username field with one of the users from your customized `jumpBoxCloudInit.yml` file. E.g. **opsuser01**
-   8. Select **SSH Private Key from Local File** and select your private key file for that specific user.
+   8. Select **SSH Private Key from Local File** and select your private key file (e.g. `opsuser01.key`) for that specific user.
    9. Provide your SSH passphrase in **SSH Passphrase** if your private key is protected with one.
    10. Click **Connect**.
    11. For enhanced "copy-on-select" & "paste-on-right-click" support, your browser may request your permission to support those features. It's recommended that you _Allow_ that feature. If you don't, you'll have to use the **>>** flyout on the screen to perform copy & paste actions.
    12. Welcome to your jump box!
+
+   > :warn: The jump box deployed in this walkthrough has only ephemeral disks attached, in which content written to disk will not survive planned or unplanned restarts of the host. Never store anything of value on these jump boxes. They are expected to be fully ephemeral in nature, and in fact could be scaled-to-zero when not in use.
 
 1. From your Azure Bastion connection, log into your Azure RBAC tenant and select your subscription.
 
@@ -99,9 +100,11 @@ Your github repo will be the source of truth for your cluster's configuration. T
    az aks get-credentials -g rg-bu0001a0005 -n $AKS_CLUSTER_NAME
    ```
 
+   > :note: The access tokens obtained in the prior two steps are subject to a Microsoft identity platform TTL (e.g. six hours). If your `az` or `kubectl` commands start erroring out after hours of usage with an message related to permission/authorization, you'll need to re-execute the `az login` and `az aks get-credentials` (overwriting your context) to refresh those tokens.
+
 1. _From your Azure Bastion connection_, test cluster access and authenticate as a cluster admin user.
 
-   The following command will force you to authenticate into your AKS cluster's control plane. This will start yet another device login flow. For this one (**Azure Kubernetes Service AAD Client**), log in with a user that is a member of your cluster admin group in the Azure AD tenet you selected to be used for Kubernetes Cluster API RBAC. Also this is where any specified Azure AD conditional access policies would take effect if they had been applied. Remember, the identity you log in here with is the identity you're performing cluster management commands (e.g. `kubectl`) as.
+   The following command will force you to authenticate into your AKS cluster's control plane. This will start yet another device login flow. For this one (**Azure Kubernetes Service AAD Client**), log in with a user that is a member of your cluster admin group in the Azure AD tenet you selected to be used for Kubernetes Cluster API RBAC. Also this is where any specified Azure AD conditional access policies would take effect if they had been applied, and ideally you would have first usef PIM JIT access to be assigned to the admin group. Remember, the identity you log in here with is the identity you're performing cluster management commands (e.g. `kubectl`) as.
 
    ```bash
    kubectl get nodes
@@ -145,7 +148,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
    kubectl describe AzureIdentity,AzureIdentityBinding -n ingress-nginx
    ```
 
-   This will show you the Azure Identity Kubernetes resources that were created via the cluster stamp ARM template. This means that any workload in the `ingress-nginx` namespace that wishes to identify itself as the Azure resource `podmi-ingress-controller` can do so by adding a `aadpodidbinding: podmi-ingress-controller` label to their pod deployment. In this walkthrough, our ingress controller, NGINX, will be using that identity, combined with the Secret Store driver for Key Vault to pull a TLS certificate you imported above.
+   This will show you the Azure Identity Kubernetes resources that were created via the cluster stamp ARM template. This means that any workload in the `ingress-nginx` namespace that wishes to identify itself as the Azure resource `podmi-ingress-controller` can do so by adding a `aadpodidbinding: podmi-ingress-controller` label to their pod deployment. In this walkthrough, our ingress controller, NGINX, will be using that identity. This identity will be used with the Secret Store driver for Key Vault to reference your wildcard ingress TLS certificate.
 
 1. _From your Azure Bastion connection_, bootstrap Flux.
 
