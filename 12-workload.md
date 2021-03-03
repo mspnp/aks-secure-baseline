@@ -110,8 +110,9 @@ TODO: Consider returning a quarantine registry in the outputs of the arm templat
      * Some customers may also include a transparent HTTP(S) proxy, such as Squid or Websense, as part of their egress strategy. This is not covered in this reference implementation.
      * Lastly, all of your traffic originating in your cluster and adjacent subnets are egressing through a firewall. This is the last responsible moment to block and observe outbound requests. If traffic has made it past AKS Network Policies and NSGs, your NVA is standing guard. Azure firewall is a deny-by-default platform, which means each and every allowance needs to be defined. Those allowances should be clamped specifically to the source of that traffic, using features like IP Groups to group "like" traffic together for ease and consistency of management.
 
-   Ultimately all layers build on each other, such that a failure/misconfiguration in a local-scope layer can hopefully be caught at a more course-grained layer.
+   When you think of network traffic, you need to consider in-cluster pod-to-pod, pod-to-AKS-controlplane, operations-to-AKS-controlplane, pod-to-azure resources, azure resources themselves (Private Link), pod-to-world, world-to-pod (via managed and controlled ingress).
 
+   Ultimately all layers build on each other, such that a failure/misconfiguration in a local-scope layer can hopefully be caught at a more course-grained layer.
 
    All workloads would should be deployed via your pipeline agents. We're deploying by hand here simply to expedite the walkthrough.
 
