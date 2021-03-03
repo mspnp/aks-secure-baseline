@@ -76,7 +76,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
 
    > :warn: The jump box deployed in this walkthrough has only ephemeral disks attached, in which content written to disk will not survive planned or unplanned restarts of the host. Never store anything of value on these jump boxes. They are expected to be fully ephemeral in nature, and in fact could be scaled-to-zero when not in use.
 
-1. From your Azure Bastion connection, log into your Azure RBAC tenant and select your subscription.
+1. _From your Azure Bastion connection_, log into your Azure RBAC tenant and select your subscription.
 
    The following command will perform a device login. Ensure you're logging in with the Azure AD user that has access to your AKS resources (i.e. the one you did your deployment with.)
 
@@ -155,6 +155,9 @@ Your github repo will be the source of truth for your cluster's configuration. T
    ```bash
    git clone https://github.com/[[YOUR_GITHUB_ACCOUNT_NAME]]/aks-regulated-cluster
    cd aks-regulated-cluster/cluster-manifests
+
+   # Deploys Secret Store CSI Drivers and other foundational items
+   kubectl apply -k cluster-baseline-settings
 
    # Apply the Flux CRDs before applying the rest of flux (to avoid a race condition in the sync settings)
    kubectl apply -f flux-system/gotk-crds.yaml

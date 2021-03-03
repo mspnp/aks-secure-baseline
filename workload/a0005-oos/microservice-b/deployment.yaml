@@ -33,7 +33,7 @@ spec:
             topologyKey: kubernetes.io/hostname
       containers:
       - name: microservice-b
-        image: YOUR_ACR.azurecr.io/live/a0005/chain-api:5.0
+        image: YOUR_ACR.azurecr.io/live/a0005/chain-api:1.0
         imagePullPolicy: IfNotPresent
         ports:
         - name: web
