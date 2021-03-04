@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: networkpolicy-microservice-web
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: microservice-web
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        # From Ingress Controller
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/instance: ingress-nginx
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/component: controller
+              app.kubernetes.io/instance: ingress-nginx
+      ports:
+        # To our Service Port
+        - port: 8080
+  egress: []
