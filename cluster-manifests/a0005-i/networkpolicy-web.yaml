@@ -1,7 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: networkpolicy-microservice-web
+  name: networkpolicy-web-frontend
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: web-frontend
 spec:
   podSelector:
     matchLabels:

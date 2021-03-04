@@ -1,7 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: microservice-web-ingress
+  name: web-frontend
+  pci-scope: in-scope
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: web-frontend
   annotations:
     kubernetes.io/ingress.allow-http: "false"
     kubernetes.io/ingress.class: nginx
@@ -25,6 +29,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: microservice-web
+            name: web-frontend
             port:
               number: 8080

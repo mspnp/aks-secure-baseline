@@ -2,22 +2,28 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: microservice-c-sa
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-c
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: microservice-c
   labels:
-    app.kubernetes.io/name: microservice-c
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-c
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: microservice-c
+      app.kubernetes.io/name: a0005
+      app.kubernetes.io/component: microservice-c
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: microservice-c
+        app.kubernetes.io/name: a0005
+        app.kubernetes.io/component: microservice-c
     spec:
       automountServiceAccountToken: false
       serviceAccount: microservice-c-sa
@@ -69,6 +75,9 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: microservice-c-pdb
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-c
 spec:
   minAvailable: 50%
   selector:
@@ -79,6 +88,9 @@ kind: Service
 apiVersion: v1
 metadata:
   name: microservice-c
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-c
 spec:
   selector:
     app.kubernetes.io/name: microservice-c
