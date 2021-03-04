@@ -32,6 +32,8 @@ TODO: Consider returning a quarantine registry in the outputs of the arm templat
    az acr build -t quarantine/a0005/chain-api:1.0 -r $ACR_NAME_QUARANTINE --platform linux/amd64 --agent-pool acragent -f SimpleChainApi/Dockerfile https://github.com/mspnp/aks-secure-baseline#feature/regulated-web-api-ui:SimpleChainApi
    ```
 
+   > You may see one or more `BlobNotFound` error messages in the early part of the build; this is okay, and you shouldn't terminate the command. It's polling for source code to be completely transferred from GitHub before proceeding. Azure cli will show this process in what appears to look like an error state.
+
    We are using your own dedicated task agents here, in a dedicated subnet, for this process. Securing your workload pipeline components are critical to having a compliant solution. Ensure your build pipeline matches your desired security posture. Consider performing image building in an Azure Container Registry that is network-isolated from your clusters (unlike what we're showing here where it's on the same virtual network for simplicity.) Ensure build logs are captured (streamed at build time and available afterwards via `az acr taskrun logs`). That build instance might also serve as your quarantine instance as well. Once the build is complete and post-build audits are complete, then it can be imported to your "live" registry. Please note, again for simplicity only, the task runner that is doing the build is not egressed through the Azure Firewall -- in your final implementation strongly consider egressing ACR task runner traffic through Azure firewall for observability and control.
 
 1. Release the workload image from quarantine.

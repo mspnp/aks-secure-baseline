@@ -54,8 +54,8 @@ spec:
             cpu: 100m
             memory: 200Mi
         env:
-        - name: DEEPTH
-          value: "1"
+        - name: DEPTH
+          value: "2"
         - name: SELF_HOSTS_DEPENDENCIES
           value: http://microservice-a-service.a0005-o,http://microservice-b-service.a0005-o,http://microservice-c-service.a0005-i
         - name: EXTERNAL_DEPENDENCIES
