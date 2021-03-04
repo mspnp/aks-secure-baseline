@@ -11,13 +11,13 @@ namespace RestAPIClient.Pages
 {
     public class IndexModel : PageModel
     {
-        private const string DEEPTH = "DEEPTH";
+        private const string DEPTH = "DEPTH";
         private readonly ILogger<IndexModel> logger;
         private readonly IDependencyCallerService dependencyCallerService;
 
         public IndexModel(IConfiguration configuration, ILogger<IndexModel> logger, IDependencyCallerService dependencyCallerService)
         {
-            Deep = configuration[DEEPTH];
+            Deep = string.IsNullOrWhiteSpace(configuration[DEPTH]) ? "0" : configuration[DEPTH];
             this.logger = logger;
             this.dependencyCallerService = dependencyCallerService;
         }
@@ -32,7 +32,7 @@ namespace RestAPIClient.Pages
                 int deep = 0;
                 int.TryParse(Deep, out deep);
                 var response = await dependencyCallerService.ComputeDependenciesAsync(deep);
-                
+
                 return RedirectToPage("Response", new { result = JsonConvert.SerializeObject(response) });
             }
             catch (ArgumentNullException uex)
