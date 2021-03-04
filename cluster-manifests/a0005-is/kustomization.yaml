@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: a0005-is
 resources:
 - namespace.yaml
-- resource-quota.yaml
+#- resource-quota.yaml
 #- networkpolicy-denyall.yaml
-- limit-range.yaml
-- rbac.yaml
+#- limit-range.yaml
+#- rbac.yaml
