@@ -16,4 +16,4 @@ spec:
     count/deployments.apps: "2"
     count/daemonset.apps: "0"
     count/services: "2"
-    count/pods: "0"
+    count/pods: "10"
