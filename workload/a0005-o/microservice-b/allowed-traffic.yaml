@@ -14,8 +14,8 @@ spec:
     - url-caller
   sources:
   - kind: ServiceAccount
-    name: microservice-web-sa
-    namespace: a0005-i
+    name: microservice-a-sa
+    namespace: a0005-o
 ---
 apiVersion: specs.smi-spec.io/v1alpha4
 kind: HTTPRouteGroup
