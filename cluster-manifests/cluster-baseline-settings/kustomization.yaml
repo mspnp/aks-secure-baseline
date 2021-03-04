@@ -12,11 +12,6 @@ resources:
 - fim/fim-standin.yaml
 - av/av-standin.yaml
 - kured/kured.yaml
-secretGenerator:
-  - name: osm-acr-instance
-    type: Opaque
-    literals:
-      - name=REPLACE_ME_WITH_YOUR_ACRNAME
 images:
 - name: busybox
   newName: REPLACE_ME_WITH_YOUR_ACRNAME.azurecr.io/live/library/busybox

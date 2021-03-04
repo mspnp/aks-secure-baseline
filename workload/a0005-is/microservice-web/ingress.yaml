@@ -2,17 +2,16 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: microservice-web-ingress
-  namespace: a0005-is
   annotations:
     kubernetes.io/ingress.allow-http: "false"
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
-#    nginx.ingress.kubernetes.io/configuration-snippet: |
-#      proxy_ssl_name "microservice-web-sa.a0005-is.cluster.local";
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_ssl_name "microservice-web-sa.a0005-i.cluster.local";
     nginx.ingress.kubernetes.io/proxy-ssl-secret: osm-system/osm-ca-bundle
     nginx.ingress.kubernetes.io/proxy-ssl-server-name: "on"
     nginx.ingress.kubernetes.io/proxy-ssl-verify: "on"
-    nginx.ingress.kubernetes.io/proxy_ssl_name: microservice-web-sa.a0005-is.cluster.local
+#    nginx.ingress.kubernetes.io/proxy_ssl_name: microservice-web-sa.a0005-i.cluster.local
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   tls:
@@ -28,4 +27,4 @@ spec:
           service:
             name: microservice-web
             port:
-              number: 80
+              number: 8080
