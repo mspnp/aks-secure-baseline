@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: a0005-oos
+  name: a0005-o
   labels:
     openservicemesh.io/monitored-by: osm
   annotations:
