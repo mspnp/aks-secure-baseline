@@ -10,7 +10,6 @@ spec:
     requests.storage: "0"
     limits.cpu: 1000m
     limits.memory: 1Gi
-    limits.storage: "0"
     count/persistentvolumeclaims: "0"
     count/services.loadbalancers: "0"
     count/services.nodeports: "0"
