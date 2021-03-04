@@ -11,7 +11,7 @@ spec:
     limits.cpu: 1000m
     limits.memory: 1Gi
     count/persistentvolumeclaims: "0"
-    count/services.loadbalancers: "0"
+    count/services.loadbalancers: "1"
     count/services.nodeports: "0"
     count/deployments.apps: "2"
     count/daemonset.apps: "0"
