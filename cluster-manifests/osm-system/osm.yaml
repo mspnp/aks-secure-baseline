@@ -10,7 +10,7 @@ metadata:
   name: osm-config
   namespace: osm-system
 data:
-  permissive_traffic_policy_mode: "true"
+  permissive_traffic_policy_mode: "false"
   egress: "true"
   envoy_log_level: "warn"
   enable_debug_server: "false"
