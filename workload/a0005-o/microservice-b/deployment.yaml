@@ -33,7 +33,7 @@ spec:
             topologyKey: kubernetes.io/hostname
       containers:
       - name: microservice-b
-        image: YOUR_ACR.azurecr.io/live/a0005/chain-api:1.0
+        image: YOUR_ACR.azurecr.io/live/a0005/chain-api:1.1
         imagePullPolicy: IfNotPresent
         ports:
         - name: web
@@ -55,7 +55,7 @@ spec:
             memory: 200Mi
         env:
         - name: SELF_HOSTS_DEPENDENCIES
-          value: http://microservice-web-service.a0005-i,http://microservice-a-service.a0005-o,http://microservice-c-service.a0005-i
+          value: http://microservice-web.a0005-i,http://microservice-a.a0005-o,http://microservice-c.a0005-i
         - name: EXTERNAL_DEPENDENCIES
           value: https://packages.microsoft.com,https://example.org
         - name: ASPNETCORE_URLS
