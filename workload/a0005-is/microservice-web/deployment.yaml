@@ -80,7 +80,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: microservice-web-service
+  name: microservice-web
 spec:
   selector:
     app.kubernetes.io/name: microservice-web

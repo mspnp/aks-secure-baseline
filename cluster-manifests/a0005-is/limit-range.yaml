@@ -12,8 +12,8 @@ spec:
       cpu: 0m
       memory: 0Mi
     default:
-      cpu: 0m
-      memory: 0Mi
+      cpu: 100m
+      memory: 200Mi
     defaultRequest:
       cpu: 0m
       memory: 0Mi

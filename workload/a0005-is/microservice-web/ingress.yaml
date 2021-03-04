@@ -26,6 +26,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: microservice-web-service
+            name: microservice-web
             port:
               number: 80
