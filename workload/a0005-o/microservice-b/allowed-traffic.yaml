@@ -2,6 +2,10 @@ kind: TrafficTarget
 apiVersion: access.smi-spec.io/v1alpha3
 metadata:
   name: microservice-b
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-b
+    pci-scope: out-of-scope
 spec:
   destination:
     kind: ServiceAccount
@@ -21,6 +25,10 @@ apiVersion: specs.smi-spec.io/v1alpha4
 kind: HTTPRouteGroup
 metadata:
   name: microservice-b
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-b
+    pci-scope: out-of-scope
 spec:
   matches:
   - name: url-caller

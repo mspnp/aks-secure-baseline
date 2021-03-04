@@ -2,35 +2,35 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: microservice-b-sa
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-b
+    pci-scope: out-of-scope
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: microservice-b
   labels:
-    app.kubernetes.io/name: microservice-b
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-b
+    pci-scope: out-of-scope
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: microservice-b
+      app.kubernetes.io/name: a0005
+      app.kubernetes.io/component: microservice-b
+      pci-scope: out-of-scope
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: microservice-b
+        app.kubernetes.io/name: a0005
+        app.kubernetes.io/component: microservice-b
+        pci-scope: out-of-scope
     spec:
       automountServiceAccountToken: false
       serviceAccount: microservice-b-sa
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app.kubernetes.io/name
-                operator: In
-                values:
-                - microservice-b
-            topologyKey: kubernetes.io/hostname
       containers:
       - name: microservice-b
         image: YOUR_ACR.azurecr.io/live/a0005/chain-api:1.1
@@ -68,20 +68,29 @@ spec:
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
-  name: microservice-b-pdb
+  name: microservice-b
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-b
 spec:
   minAvailable: 50%
   selector:
     matchLabels:
-      app.kubernetes.io/name: microservice-b
+      app.kubernetes.io/name: a0005
+      app.kubernetes.io/component: microservice-b
 ---
 kind: Service
 apiVersion: v1
 metadata:
   name: microservice-b
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-b
+    pci-scope: out-of-scope
 spec:
   selector:
-    app.kubernetes.io/name: microservice-b
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-b
   ports:
   - name: http
     port: 80
