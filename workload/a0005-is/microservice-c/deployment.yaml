@@ -65,7 +65,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
         kubernetes.io/os: linux
-        pci-scope: out-of-scope
+        pci-scope: in-scope
 ---
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
