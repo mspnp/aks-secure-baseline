@@ -3,6 +3,8 @@ kind: Namespace
 metadata:
   name: a0005-i
   labels:
+    app.kubernetes.io/name: a0005
+    pci-scope: in-scope
     openservicemesh.io/monitored-by: osm
   annotations:
     openservicemesh.io/sidecar-injection: enabled
