@@ -4,3 +4,5 @@ metadata:
   name: a0005-oos
   labels:
     openservicemesh.io/monitored-by: osm
+  annotations:
+    openservicemesh.io/sidecar-injection: enabled
