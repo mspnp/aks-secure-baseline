@@ -4,6 +4,6 @@ namespace: a0005-oos
 resources:
 - namespace.yaml
 - resource-quota.yaml
-- networkpolicy-denyall.yaml
+#- networkpolicy-denyall.yaml
 - limit-range.yaml
 - rbac.yaml
