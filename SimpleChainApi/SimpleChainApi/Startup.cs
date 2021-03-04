@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.Certificate;
+using SimpleChainApi.Services;
 
 namespace SimpleChainApi
 {
@@ -23,6 +24,7 @@ namespace SimpleChainApi
             services.AddControllers();
             services.AddHttpClient();
             services.AddRazorPages();
+            services.AddTransient<IDependencyCallerService, DependencyCallerService>();
             services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
                 .AddCertificate(options =>
                     {

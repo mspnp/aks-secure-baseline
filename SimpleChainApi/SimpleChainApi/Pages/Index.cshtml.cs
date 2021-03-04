@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SimpleChainApi.Services;
 
 namespace RestAPIClient.Pages
 {
@@ -13,41 +13,27 @@ namespace RestAPIClient.Pages
     {
         private const string DEEPTH = "DEEPTH";
         private readonly ILogger<IndexModel> logger;
+        private readonly IDependencyCallerService dependencyCallerService;
 
-        public IndexModel(IConfiguration configuration, ILogger<IndexModel> logger)
+        public IndexModel(IConfiguration configuration, ILogger<IndexModel> logger, IDependencyCallerService dependencyCallerService)
         {
             Deep = configuration[DEEPTH];
             this.logger = logger;
+            this.dependencyCallerService = dependencyCallerService;
         }
 
         [BindProperty]
         public string Deep { get; set; }
 
-        public void OnGet()
+        public async Task<IActionResult> OnPostAsync()
         {
-
-        }
-
-        public async Task<IActionResult> OnPost()
-        {
-            string responseContent = "[]";
             try
             {
-                var stringURL = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/URLCaller/depth/{Deep}";
-                logger.LogInformation("URL Generated: {stringURL}", stringURL);
+                int deep = 0;
+                int.TryParse(Deep, out deep);
+                var response = await dependencyCallerService.ComputeDependenciesAsync(deep);
                 
-                Uri baseURL = new Uri(stringURL);
-
-                HttpClient client = new HttpClient();
-
-                HttpResponseMessage response = await client.GetAsync(baseURL.ToString());
-
-                if (response.IsSuccessStatusCode)
-                {
-                    responseContent = await response.Content.ReadAsStringAsync();
-                }
-
-                return RedirectToPage("Response", new { result = responseContent });
+                return RedirectToPage("Response", new { result = JsonConvert.SerializeObject(response) });
             }
             catch (ArgumentNullException uex)
             {

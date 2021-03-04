@@ -24,10 +24,6 @@ namespace RestAPIClient.Pages
             if (dependencyResult.ExternalDependencies.Any() || dependencyResult.SelfCalled.Any())
             {
                 sb.AppendLine($"<br><div style='padding-left: {indent} em;'>");
-                if (indent == 0) { 
-                    sb.AppendLine($"<b>{dependencyResult.URL}</b><br><br>");
-                }
-
                 sb.AppendLine("<label>External dependencies: </label><br><ul>");
                 foreach (var externalDependency in dependencyResult.ExternalDependencies)
                 {
