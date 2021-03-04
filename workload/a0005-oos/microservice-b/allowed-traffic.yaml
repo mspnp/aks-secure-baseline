@@ -6,7 +6,7 @@ spec:
   destination:
     kind: ServiceAccount
     name: microservice-b-sa
-    namespace: a0005-oss
+    namespace: a0005-o
   rules:
   - kind: HTTPRouteGroup
     name: microservice-b
@@ -15,7 +15,7 @@ spec:
   sources:
   - kind: ServiceAccount
     name: microservice-web-sa
-    namespace: a0005-is
+    namespace: a0005-i
 ---
 apiVersion: specs.smi-spec.io/v1alpha4
 kind: HTTPRouteGroup

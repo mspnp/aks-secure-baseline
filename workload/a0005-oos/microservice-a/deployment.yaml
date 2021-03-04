@@ -57,7 +57,7 @@ spec:
         - name: DEEPTH
           value: "1"
         - name: SELF_HOSTS_DEPENDENCIES
-          value: http://microservice-web-service.a0005-is,http://microservice-b-service.a0005-oos,http://microservice-c-service.a0005-is
+          value: http://microservice-web-service.a0005-i,http://microservice-b-service.a0005-o,http://microservice-c-service.a0005-i
         - name: EXTERNAL_DEPENDENCIES
           value: https://packages.microsoft.com,https://example.org
         - name: ASPNETCORE_URLS
@@ -80,7 +80,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: microservice-a-service
+  name: microservice-a
 spec:
   selector:
     app.kubernetes.io/name: microservice-a
