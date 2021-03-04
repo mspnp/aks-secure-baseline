@@ -63,6 +63,8 @@ spec:
         - name: ASPNETCORE_URLS
           value: http://*:8080
       nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/os: linux
         pci-scope: out-of-scope
 ---
 apiVersion: policy/v1beta1

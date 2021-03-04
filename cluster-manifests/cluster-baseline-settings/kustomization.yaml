@@ -12,8 +12,6 @@ resources:
 - fim/fim-standin.yaml
 - av/av-standin.yaml
 - kured/kured.yaml
-#- osm/osm-crds.yaml
-#- osm/osm.yaml
 secretGenerator:
   - name: osm-acr-instance
     type: Opaque

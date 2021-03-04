@@ -208,6 +208,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
         kubernetes.io/os: linux
+        pci-scope: out-of-scope
       securityContext:
         fsGroup: 1337
       serviceAccountName: kustomize-controller
@@ -291,6 +292,7 @@ spec:
       nodeSelector:
         kubernetes.io/arch: amd64
         kubernetes.io/os: linux
+        pci-scope: out-of-scope
       terminationGracePeriodSeconds: 10
       volumes:
       - emptyDir: {}

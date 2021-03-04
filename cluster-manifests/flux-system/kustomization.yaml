@@ -9,8 +9,6 @@ resources:
 - limit-range.yaml
 - resource-quota.yaml
 - rbac.yaml
-patchesStrategicMerge:
-- gotk-components-patch.yaml
 images:
 - name: ghcr.io/fluxcd/source-controller
   newName: REPLACE_ME_WITH_YOUR_ACRNAME.azurecr.io/live/fluxcd/source-controller

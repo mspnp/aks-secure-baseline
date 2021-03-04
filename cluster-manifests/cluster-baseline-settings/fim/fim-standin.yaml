@@ -26,11 +26,9 @@ spec:
         kubernetes.io/arch: amd64
         kubernetes.io/os: linux
       tolerations:
-      - effect: NoExecute
-        key: pci-scope
-        operator: Equal
-        value: out-of-scope
-      - effect: NoExecute
-        key: pci-scope
-        operator: Equal
-        value: in-scope
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: CriticalAddonsOnly
+          effect: NoSchedule
+          operator: Equal
+          value: "true"

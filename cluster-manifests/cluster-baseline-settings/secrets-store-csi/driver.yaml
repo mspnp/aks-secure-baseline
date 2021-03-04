@@ -330,15 +330,6 @@ spec:
                 operator: NotIn
                 values:
                 - system
-      tolerations:
-      - effect: NoExecute
-        key: pci-scope
-        operator: Equal
-        value: out-of-scope
-      - effect: NoExecute
-        key: pci-scope
-        operator: Equal
-        value: in-scope
       serviceAccountName: secrets-store-csi-driver
       hostNetwork: true
       containers:

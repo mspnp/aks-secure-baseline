@@ -28,16 +28,12 @@ spec:
     spec:
       serviceAccountName: aks-falco
       tolerations:
-        - effect: NoSchedule
-          key: node-role.kubernetes.io/master
-        - effect: NoExecute
-          key: pci-scope
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: CriticalAddonsOnly
+          effect: NoSchedule
           operator: Equal
-          value: in-scope
-        - effect: NoExecute
-          key: pci-scope
-          operator: Equal
-          value: out-of-scope
+          value: "true"
       containers:
         - name: falco
           image: docker.io/falcosecurity/falco:0.27.0

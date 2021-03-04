@@ -92,16 +92,8 @@ spec:
       tolerations:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
-        - effect: NoExecute
-          key: pci-scope
-          operator: Equal
-          value: in-scope
-        - effect: NoExecute
-          key: pci-scope
-          operator: Equal
-          value: out-of-scope
-        - effect: NoSchedule
-          key: CriticalAddonsOnly
+        - key: CriticalAddonsOnly
+          effect: NoSchedule
           operator: Equal
           value: "true"
       hostPID: true # Facilitate entering the host mount namespace via init

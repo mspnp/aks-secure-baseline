@@ -31,17 +31,6 @@ spec:
                 values:
                 - microservice-web
             topologyKey: kubernetes.io/hostname
-        podAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app.kubernetes.io/name
-                  operator: In
-                  values:
-                  - traefik-ingress-ilb
-              topologyKey: "kubernetes.io/hostname"
       containers:
       - name: microservice-web
         image: YOUR_ACR.azurecr.io/live/a0005/chain-api:1.0
@@ -74,6 +63,8 @@ spec:
         - name: ASPNETCORE_URLS
           value: http://*:8080
       nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/os: linux
         pci-scope: out-of-scope
 ---
 apiVersion: policy/v1beta1
