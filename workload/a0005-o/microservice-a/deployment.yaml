@@ -86,6 +86,7 @@ metadata:
   labels:
     app.kubernetes.io/name: a0005
     app.kubernetes.io/component: microservice-a
+    pci-scope: out-of-scope
 spec:
   selector:
     app.kubernetes.io/name: a0005

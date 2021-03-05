@@ -85,10 +85,10 @@ kind: Service
 apiVersion: v1
 metadata:
   name: web-frontend
-  pci-scope: in-scope
   labels:
     app.kubernetes.io/name: a0005
     app.kubernetes.io/component: web-frontend
+    pci-scope: in-scope
 spec:
   selector:
     app.kubernetes.io/name: a0005
