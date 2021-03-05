@@ -1,14 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: networkpolicy-web-frontend
+  name: web-frontend
   labels:
     app.kubernetes.io/name: a0005
     app.kubernetes.io/component: web-frontend
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/name: microservice-web
+      app.kubernetes.io/name: a0005
+      app.kubernetes.io/component: web-frontend
   policyTypes:
     - Ingress
     - Egress
