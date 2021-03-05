@@ -14,6 +14,11 @@ spec:
     - Ingress
     - Egress
   ingress:
+    # For our service mesh proxy to talk to the service
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: osm-system
     - from:
         # From Ingress Controller
         - namespaceSelector:
@@ -29,6 +34,11 @@ spec:
         - port: 8080
           protocol: TCP
   egress:
+    - to:
+       # For our service mesh proxy to talk to its xDS controller
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: osm-system
     - to:
         # To microservice-a in a0005-o namespace
         - namespaceSelector:
