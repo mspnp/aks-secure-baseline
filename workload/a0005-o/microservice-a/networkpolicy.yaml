@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: microservice-a
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-a
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: a0005
+      app.kubernetes.io/component: microservice-a
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        # From web-frontend in a0005-i namespace
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: a0005
+              pci-scope: in-scope
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: a0005
+              app.kubernetes.io/component: web-frontend
+      ports:
+        # To our pod's port
+        - port: 8080
+          protocol: TCP
+  egress: []

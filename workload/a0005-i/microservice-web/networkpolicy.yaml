@@ -25,6 +25,21 @@ spec:
               app.kubernetes.io/component: controller
               app.kubernetes.io/instance: ingress-nginx
       ports:
-        # To our Service Port
+        # To our pod's port
         - port: 8080
-  egress: []
+          protocol: TCP
+  egress:
+    - to:
+        # To microservice-a in a0005-o namespace
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: a0005
+              pci-scope: out-of-scope
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: a0005
+              app.kubernetes.io/component: microservice-a
+      ports:
+        # To microservice-a's pod port
+        - port: 8080
+          protocol: TCP
