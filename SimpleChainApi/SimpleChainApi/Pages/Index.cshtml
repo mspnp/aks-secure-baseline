@@ -5,10 +5,4 @@
 }
 
 <h3 class="text-danger">This process attempts to see networking connections</h3>
-<form method="post" class="form-horizontal">
-    <div class="form-group left">
-        <div class="col-sm-offset-1">
-            <input type="submit" value="GO!" class="btn btn-default"/>
-        </div>
-    </div>
-</form>
+<div>@Html.Raw(Model.FormatedResult)</div>
