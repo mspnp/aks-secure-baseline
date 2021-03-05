@@ -18,7 +18,7 @@ spec:
     - url-caller
   sources:
   - kind: ServiceAccount
-    name: microservice-web-sa
+    name: web-frontend-sa
     namespace: a0005-i
 ---
 apiVersion: specs.smi-spec.io/v1alpha4

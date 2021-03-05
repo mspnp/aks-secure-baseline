@@ -76,7 +76,7 @@ TODO: Consider returning a quarantine registry in the outputs of the arm templat
 
    # Deploy "In-Scope" components.  These will live in the a0005-i namespace and will be
    # scheduled on the aks-npinscope01 node pool - dedicated to just those workloads.
-   kubectl apply -k a0005-i/microservice-web
+   kubectl apply -k a0005-i/web-frontend
    kubectl apply -k a0005-i/microservice-c
 
    # Deploy "Out-of-Scope" components. These will live in the a0005-o namespace and will
