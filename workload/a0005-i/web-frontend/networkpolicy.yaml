@@ -35,7 +35,7 @@ spec:
           protocol: TCP
   egress:
     - to:
-       # For our service mesh proxy to talk to its xDS controller
+        # For our service mesh proxy to talk to its xDS controller
         - namespaceSelector:
             matchLabels:
               app.kubernetes.io/name: osm-system

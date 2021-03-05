@@ -14,6 +14,11 @@ spec:
     - Ingress
     - Egress
   ingress:
+    # For our service mesh proxy to talk to the service
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: osm-system
     - from:
         # From web-frontend in a0005-i namespace
         - namespaceSelector:
@@ -28,4 +33,9 @@ spec:
         # To our pod's port
         - port: 8080
           protocol: TCP
-  egress: []
+  egress:
+    - to:
+        # For our service mesh proxy to talk to its xDS controller
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: osm-system
