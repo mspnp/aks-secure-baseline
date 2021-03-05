@@ -2,10 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: web-frontend
-  pci-scope: in-scope
   labels:
     app.kubernetes.io/name: a0005
     app.kubernetes.io/component: web-frontend
+    pci-scope: in-scope
   annotations:
     kubernetes.io/ingress.allow-http: "false"
     kubernetes.io/ingress.class: nginx

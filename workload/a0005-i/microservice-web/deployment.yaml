@@ -5,6 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: a0005
     app.kubernetes.io/component: web-frontend
+    pci-scope: in-scope
 ---
 apiVersion: apps/v1
 kind: Deployment
