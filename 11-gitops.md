@@ -150,10 +150,10 @@ Your github repo will be the source of truth for your cluster's configuration. T
 
    This will show you the Azure Identity Kubernetes resources that were created via the cluster stamp ARM template. This means that any workload in the `ingress-nginx` namespace that wishes to identify itself as the Azure resource `podmi-ingress-controller` can do so by adding a `aadpodidbinding: podmi-ingress-controller` label to their pod deployment. In this walkthrough, our ingress controller, NGINX, will be using that identity. This identity will be used with the Secret Store driver for Key Vault to reference your wildcard ingress TLS certificate.
 
-1. _From your Azure Bastion connection_, bootstrap Flux.
+1. _From your Azure Bastion connection_, bootstrap Flux. 🛑
 
    ```bash
-   git clone https://github.com/[[YOUR_GITHUB_ACCOUNT_NAME]]/aks-regulated-cluster
+   git clone https://github.com/YOUR-GITHUB-ACCOUNT-NAME-GOES-HERE/aks-regulated-cluster
    cd aks-regulated-cluster/cluster-manifests
 
    # Deploys Secret Store CSI Drivers and other foundational items

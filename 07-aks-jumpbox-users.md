@@ -10,7 +10,7 @@ You have multiple options on how you manage your jump box users. Because jump bo
 
 Following the steps below, you'll end up with a SSH public-key-based solution that leverages [cloud-init](https://docs.microsoft.com/azure/virtual-machines/linux/using-cloud-init). The results will be captured in `jumpBoxCloudInit.yml` which you will later convert to Base64 for use in your cluster's ARM template.
 
-## Steps
+## Steps 🛑
 
 1. Open `jumpBoxCloudInit.yml` in your preferred editor.
 1. Add/remove/modify users following the two examples in that file. You need **one** user defined in this file to complete this walk through (_more than one user is fine_, but not necessary).

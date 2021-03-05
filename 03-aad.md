@@ -31,7 +31,7 @@ Following the steps below you will result in an Azure AD configuration that will
    TENANTID_AZURERBAC=$(az account show --query tenantId -o tsv)
    ```
 
-1. Log in to the tenant where Kubernetes Cluster API authorization will be associated with.
+1. Log in to the tenant where Kubernetes Cluster API authorization will be associated with. 🛑
 
    Capture the Azure AD Tenant ID that will be associated with your cluster's Kubernetes RBAC for Cluster API access. This is _typically_ the same tenant as your Azure RBAC, see [Azure AD tenant selection](#Azure-AD-tenant-selection) above for more details. However, if you do not have access to manage Azure AD groups and permissions, you may create a temporary tenant specifically for this walkthrough so that you're not blocked at this point.
 
