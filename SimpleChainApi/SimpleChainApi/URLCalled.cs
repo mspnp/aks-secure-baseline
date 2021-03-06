@@ -4,13 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace SimpleChainApi
 {
-    public class URLCalled
+    public class UrlCalled
     {
         [JsonPropertyName("date")]
         public DateTime Date { get; set; }
 
         [JsonPropertyName("uri")]
-        public string URI { get; set; }
+        public string Uri { get; set; }
 
         [JsonPropertyName("success")]
         public bool Success { get; set; }

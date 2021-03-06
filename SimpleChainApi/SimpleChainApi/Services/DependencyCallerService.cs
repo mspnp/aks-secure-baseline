@@ -11,13 +11,10 @@ namespace SimpleChainApi.Services
     public class DependencyCallerService : IDependencyCallerService
     {
         private const string EXTERNAL_DEPENDENCIES = "EXTERNAL_DEPENDENCIES";
-
         private const string SELF_HOSTS_DEPENDENCIES = "SELF_HOSTS_DEPENDENCIES";
 
         private readonly ILogger<DependencyCallerService> _logger;
-
         private readonly IHttpClientFactory _clientFactory;
-
         private readonly IConfiguration _configuration;
 
         public DependencyCallerService(ILogger<DependencyCallerService> logger, IConfiguration configuration, IHttpClientFactory clientFactory)
@@ -31,10 +28,12 @@ namespace SimpleChainApi.Services
             var dependencyResult = new DependencyResult();
             if (depth > 0)
             {
-               
                 await ComputeExternalDependenciesAsync(dependencyResult);
-
                 await ComputeSelfDependenciesAsync(dependencyResult, depth);
+            }
+            else
+            {
+                _logger.LogInformation("Depth was 0, skipping dependency calls.");
             }
 
             return dependencyResult;
@@ -43,15 +42,15 @@ namespace SimpleChainApi.Services
         private async Task ComputeExternalDependenciesAsync(DependencyResult dependencyResult)
         {
             var client = _clientFactory.CreateClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
+            client.Timeout = TimeSpan.FromSeconds(3);
             var urlList = _configuration[EXTERNAL_DEPENDENCIES];
             _logger.LogInformation("URL external dependencies {urlList}", urlList);
             if (!string.IsNullOrWhiteSpace(urlList))
             {
-                var result = new List<URLCalled>();
+                var result = new List<UrlCalled>();
                 foreach (var url in urlList.Split(','))
                 {
-                    var urlCalledResult = new URLCalled { Date = DateTime.Now, URI = url };
+                    var urlCalledResult = new UrlCalled { Date = DateTime.Now, Uri = url };
                     var request = new HttpRequestMessage(HttpMethod.Get, url);
                     try
                     {
@@ -73,7 +72,7 @@ namespace SimpleChainApi.Services
         private async Task ComputeSelfDependenciesAsync(DependencyResult dependencyResult, int depth)
         {
             var client = _clientFactory.CreateClient();
-            client.Timeout = TimeSpan.FromMinutes(5);
+            client.Timeout = TimeSpan.FromMinutes(1);
             var hostPortList = _configuration[SELF_HOSTS_DEPENDENCIES];
             var newDepth = depth - 1;
             _logger.LogInformation("URL self dependencies {hostPortList}", hostPortList);
@@ -83,7 +82,7 @@ namespace SimpleChainApi.Services
                 foreach (var hostPort in hostPortList.Split(','))
                 {
                     var url = $"{hostPort}/URLCaller/depth/{newDepth}";
-                    var urlCalledResult = new SelfDependencyCalled { Date = DateTime.Now, URI = url };
+                    var urlCalledResult = new SelfDependencyCalled { Date = DateTime.UtcNow, Uri = url };
                     var request = new HttpRequestMessage(HttpMethod.Get, url);
                     try
                     {

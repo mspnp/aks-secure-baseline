@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SimpleChainApi;
 using SimpleChainApi.Services;
 
@@ -36,23 +35,15 @@ namespace RestAPIClient.Pages
             try
             {
                 int deep = 0;
-                int.TryParse(Deep, out deep);
+                _ = int.TryParse(Deep, out deep);
                 var response = await dependencyCallerService.ComputeDependenciesAsync(deep);
                 StringBuilder stringBuilder = new StringBuilder();
                 Format(response, stringBuilder, 0);
                 FormatedResult = stringBuilder.ToString();
             }
-            catch (ArgumentNullException uex)
-            {
-                logger.LogError("ArgumentNullException {uex}", uex);
-            }
-            catch (JsonReaderException jex)
-            {
-                logger.LogError("JsonReaderException {jex}", jex);
-            }
             catch (Exception ex)
             {
-                logger.LogError("Exception {uex}", ex);
+                logger.LogError(ex, "Unexpected error in OnGetAsync");
             }
         }
 
@@ -66,7 +57,7 @@ namespace RestAPIClient.Pages
                 {
                     var color = externalDependency.Success ? "text-success" : "text-danger";
                     var status = externalDependency.StatusCode == 0 ? "Fail to connect" : $" StatusCode: {externalDependency.StatusCode}";
-                    sb.Append($"<li><p class=\"{color}\"><i>{externalDependency.URI}</i><br>");
+                    sb.Append($"<li><p class=\"{color}\"><i>{externalDependency.Uri}</i><br>");
                     sb.Append(status);
                     sb.Append("</li></p>");
                 }
@@ -77,7 +68,7 @@ namespace RestAPIClient.Pages
                 {
                     var color = selfCalled.Success ? "text-success" : "text-danger";
                     var status = selfCalled.StatusCode == 0 ? "Fail to connect" : $" StatusCode: {selfCalled.StatusCode}";
-                    sb.Append($"<li><p class=\"{color}\"><i>{selfCalled.URI}</i><br>");
+                    sb.Append($"<li><p class=\"{color}\"><i>{selfCalled.Uri}</i><br>");
                     sb.Append(status);
                     Format(selfCalled.DependencyResult, sb, indent + 2);
                     sb.Append("</li></p>");

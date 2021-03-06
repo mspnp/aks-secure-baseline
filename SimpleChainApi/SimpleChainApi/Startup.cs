@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.Certificate;
 using SimpleChainApi.Services;
 
 namespace SimpleChainApi
@@ -25,23 +23,14 @@ namespace SimpleChainApi
             services.AddHttpClient();
             services.AddRazorPages();
             services.AddTransient<IDependencyCallerService, DependencyCallerService>();
-            services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
-                .AddCertificate(options =>
-                    {
-                        options.AllowedCertificateTypes = CertificateTypes.All;
-                    });
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, ILogger<Startup> logger)
         {
             logger.LogInformation("Starting.");
 
             app.UseRouting();
-
-            app.UseHttpsRedirection();
-
             app.UseStaticFiles();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

@@ -13,7 +13,7 @@ namespace SimpleChainApi
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                 .ConfigureAppConfiguration((hostingContext, config) =>
+                 .ConfigureAppConfiguration(config =>
                  {
                      config.AddEnvironmentVariables();
                  })

@@ -2,7 +2,7 @@
 
 namespace SimpleChainApi
 {
-    public class SelfDependencyCalled : URLCalled
+    public class SelfDependencyCalled : UrlCalled
     {
         [JsonPropertyName("dependencyResult")]
         public DependencyResult DependencyResult { set; get; }
