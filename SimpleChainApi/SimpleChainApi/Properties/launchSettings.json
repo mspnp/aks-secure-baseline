@@ -19,12 +19,12 @@
     "SimpleChainApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "environmentVariables": {
-        "SELF_HOSTS_DEPENDENCIES": "http://localhost:5001,http://localhost:5001",
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "EXTERNAL_DEPENDENCIES": "https://whatismyip.io/,https://failure/",
-        "DEPTH": "2"
-      },
+        "environmentVariables": {
+            "SELF_HOSTS_DEPENDENCIES": "http://localhost:5001,http://localhost2:5001,http://localhost:5001",
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "EXTERNAL_DEPENDENCIES": "https://whatismyip.io/,https://failure/",
+            "DEPTH": "4"
+        },
       "dotnetRunMessages": "true",
       "applicationUrl": "http://localhost:5001"
     },

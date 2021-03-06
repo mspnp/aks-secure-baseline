@@ -2,7 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SimpleChainApi.Services;
+using System;
+using System.Net.Http;
+using System.Threading;
 
 namespace SimpleChainApi
 {
@@ -20,7 +24,15 @@ namespace SimpleChainApi
         {
 
             services.AddControllers();
-            services.AddHttpClient();
+            services.AddHttpClient(Options.DefaultName).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                return new SocketsHttpHandler
+                {
+                    AllowAutoRedirect = false,
+                    UseCookies = false,
+                    ConnectTimeout = TimeSpan.FromSeconds(1)
+                };
+            });
             services.AddRazorPages();
             services.AddTransient<IDependencyCallerService, DependencyCallerService>();
         }

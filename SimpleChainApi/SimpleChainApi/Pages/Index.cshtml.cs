@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Humanizer;
+using Humanizer.Localisation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +51,7 @@ namespace RestAPIClient.Pages
 
         public void Format(DependencyResult dependencyResult, StringBuilder sb, int indent)
         {
-            if (dependencyResult.ExternalDependencies.Any() || dependencyResult.SelfCalled.Any())
+            if (dependencyResult != null && (dependencyResult.ExternalDependencies.Any() || dependencyResult.SelfCalled.Any()))
             {
                 sb.AppendLine($"<br><div style='padding-left: {indent} em;'>");
                 sb.AppendLine("<label>External dependencies: </label><br><ul>");
@@ -57,7 +59,7 @@ namespace RestAPIClient.Pages
                 {
                     var color = externalDependency.Success ? "text-success" : "text-danger";
                     var status = externalDependency.StatusCode == 0 ? "Fail to connect" : $" StatusCode: {externalDependency.StatusCode}";
-                    sb.Append($"<li><p class=\"{color}\"><i>{externalDependency.Uri}</i><br>");
+                    sb.Append($"<li><p class=\"{color}\"><i>{externalDependency.Uri}</i> ({TimeSpan.FromMilliseconds(externalDependency.RequestTimeIsMs).Humanize()})<br>");
                     sb.Append(status);
                     sb.Append("</li></p>");
                 }
@@ -68,7 +70,7 @@ namespace RestAPIClient.Pages
                 {
                     var color = selfCalled.Success ? "text-success" : "text-danger";
                     var status = selfCalled.StatusCode == 0 ? "Fail to connect" : $" StatusCode: {selfCalled.StatusCode}";
-                    sb.Append($"<li><p class=\"{color}\"><i>{selfCalled.Uri}</i><br>");
+                    sb.Append($"<li><p class=\"{color}\"><i>{selfCalled.Uri}</i> ({TimeSpan.FromMilliseconds(selfCalled.RequestTimeIsMs).Humanize()})<br>");
                     sb.Append(status);
                     Format(selfCalled.DependencyResult, sb, indent + 2);
                     sb.Append("</li></p>");

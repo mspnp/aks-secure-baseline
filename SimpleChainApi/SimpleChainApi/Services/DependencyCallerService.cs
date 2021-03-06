@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace SimpleChainApi.Services
@@ -28,8 +30,8 @@ namespace SimpleChainApi.Services
             var dependencyResult = new DependencyResult();
             if (depth > 0)
             {
-                await ComputeExternalDependenciesAsync(dependencyResult);
-                await ComputeSelfDependenciesAsync(dependencyResult, depth);
+                dependencyResult.ExternalDependencies = await ComputeExternalDependenciesAsync();
+                dependencyResult.SelfCalled = await ComputeSelfDependenciesAsync(depth);
             }
             else
             {
@@ -39,71 +41,100 @@ namespace SimpleChainApi.Services
             return dependencyResult;
         }
 
-        private async Task ComputeExternalDependenciesAsync(DependencyResult dependencyResult)
+        private async Task<List<UrlCalled>> ComputeExternalDependenciesAsync()
         {
-            var client = _clientFactory.CreateClient();
-            client.Timeout = TimeSpan.FromSeconds(3);
+            var result = new List<UrlCalled>();
             var urlList = _configuration[EXTERNAL_DEPENDENCIES];
             _logger.LogInformation("URL external dependencies {urlList}", urlList);
             if (!string.IsNullOrWhiteSpace(urlList))
             {
-                var result = new List<UrlCalled>();
-                foreach (var url in urlList.Split(','))
+                var urls = urlList.Split(',');
+                if (urls.Any())
                 {
-                    var urlCalledResult = new UrlCalled { Date = DateTime.Now, Uri = url };
-                    var request = new HttpRequestMessage(HttpMethod.Get, url);
-                    try
-                    {
-                        var response = await client.SendAsync(request);
-                        urlCalledResult.Success = response.IsSuccessStatusCode;
-                        urlCalledResult.StatusCode = response.StatusCode;
-                    }
-                    catch (HttpRequestException)
-                    {
-                        urlCalledResult.Success = false;
-                    }
-                    result.Add(urlCalledResult);
-                }
+                    var client = _clientFactory.CreateClient();
+                    client.Timeout = TimeSpan.FromSeconds(5);
 
-                dependencyResult.ExternalDependencies = result;
+                    var calls = urls.Select(url => CallExternalUrlAsync(client, url));
+                    result.AddRange(await Task.WhenAll(calls));
+                }
             }
+            return result;
         }
 
-        private async Task ComputeSelfDependenciesAsync(DependencyResult dependencyResult, int depth)
+        private static async Task<UrlCalled> CallExternalUrlAsync(HttpClient client, string url)
         {
-            var client = _clientFactory.CreateClient();
-            client.Timeout = TimeSpan.FromMinutes(1);
-            var hostPortList = _configuration[SELF_HOSTS_DEPENDENCIES];
-            var newDepth = depth - 1;
-            _logger.LogInformation("URL self dependencies {hostPortList}", hostPortList);
-            if (!string.IsNullOrWhiteSpace(hostPortList) && depth > 0)
+            var urlCalledResult = new UrlCalled { Date = DateTime.UtcNow, Uri = url };
+            var sw = Stopwatch.StartNew();
+            try
             {
-                var result = new List<SelfDependencyCalled>();
-                foreach (var hostPort in hostPortList.Split(','))
-                {
-                    var url = $"{hostPort}/URLCaller/depth/{newDepth}";
-                    var urlCalledResult = new SelfDependencyCalled { Date = DateTime.UtcNow, Uri = url };
-                    var request = new HttpRequestMessage(HttpMethod.Get, url);
-                    try
-                    {
-                        var response = await client.SendAsync(request);
-                        urlCalledResult.Success = response.IsSuccessStatusCode;
-                        urlCalledResult.StatusCode = response.StatusCode;
-                        if (urlCalledResult.Success)
-                        {
-                            var innerDependencyResult = JsonSerializer.Deserialize<DependencyResult>(await response.Content.ReadAsStringAsync());
-                            urlCalledResult.DependencyResult = innerDependencyResult;
-                        }
-                    }
-                    catch (HttpRequestException)
-                    {
-                        urlCalledResult.Success = false;
-                    }
-                    result.Add(urlCalledResult);
-                }
-
-                dependencyResult.SelfCalled = result;
+                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url), HttpCompletionOption.ResponseHeadersRead);
+                urlCalledResult.Success = response.IsSuccessStatusCode;
+                urlCalledResult.StatusCode = response.StatusCode;
+                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
             }
+            catch (HttpRequestException)
+            {
+                urlCalledResult.Success = false;
+            }
+            catch(TaskCanceledException)
+            {
+                // Timeout
+                urlCalledResult.Success = false;
+            }
+
+            return urlCalledResult;
+        }
+
+        private static async Task<SelfDependencyCalled> CallPeerServiceAsync(HttpClient client, string url)
+        {
+            var urlCalledResult = new SelfDependencyCalled { Date = DateTime.UtcNow, Uri = url };
+
+            var sw = Stopwatch.StartNew();
+            try
+            {
+                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
+                urlCalledResult.Success = response.IsSuccessStatusCode;
+                urlCalledResult.StatusCode = response.StatusCode;
+                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
+                if (urlCalledResult.Success)
+                {
+                    urlCalledResult.DependencyResult = await response.Content.ReadFromJsonAsync<DependencyResult>();
+                }
+            }
+            catch (HttpRequestException)
+            {
+                urlCalledResult.Success = false;
+            }
+            catch (TaskCanceledException)
+            {
+                // Timeout
+                urlCalledResult.Success = false;
+            }
+
+            return urlCalledResult;
+        }
+
+        private async Task<List<SelfDependencyCalled>> ComputeSelfDependenciesAsync(int depth)
+        {
+            var peerHostsConfigValue = _configuration[SELF_HOSTS_DEPENDENCIES];
+            _logger.LogInformation("URL self dependencies {hostPortList}", peerHostsConfigValue);
+            var result = new List<SelfDependencyCalled>();
+
+            if (!string.IsNullOrWhiteSpace(peerHostsConfigValue) && depth > 0)
+            {
+                var newDepth = depth - 1;
+
+                var peerHosts = peerHostsConfigValue.Split(',');
+                if (peerHosts.Any())
+                {
+                    var client = _clientFactory.CreateClient();
+                    client.Timeout = TimeSpan.FromSeconds(15);
+                    var calls = peerHosts.Select(peerHost => CallPeerServiceAsync(client, $"{peerHost}/URLCaller/depth/{newDepth}"));
+                    result.AddRange(await Task.WhenAll(calls));
+                }
+            }
+
+            return result;
         }
     }
 }
