@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SimpleChainApi.Services;
+using System;
 
 namespace SimpleChainApi
 {
@@ -20,7 +22,10 @@ namespace SimpleChainApi
         {
 
             services.AddControllers();
-            services.AddHttpClient();
+            services.AddHttpClient(Options.DefaultName, c =>
+            {
+                c.Timeout = TimeSpan.FromSeconds(14);
+            });
             services.AddRazorPages();
             services.AddTransient<IDependencyCallerService, DependencyCallerService>();
         }

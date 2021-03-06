@@ -30,8 +30,14 @@ namespace SimpleChainApi.Services
             var dependencyResult = new DependencyResult();
             if (depth > 0)
             {
-                dependencyResult.ExternalDependencies = await ComputeExternalDependenciesAsync();
-                dependencyResult.SelfCalled = await ComputeSelfDependenciesAsync(depth);
+                var client = _clientFactory.CreateClient();
+                var getExternalTask = ComputeExternalDependenciesAsync(client);
+                var getInternalTask = ComputeSelfDependenciesAsync(client, depth);
+
+                await Task.WhenAll(getExternalTask, getInternalTask);
+
+                dependencyResult.ExternalDependencies = getExternalTask.Result;
+                dependencyResult.SelfCalled = getInternalTask.Result;
             }
             else
             {
@@ -41,7 +47,7 @@ namespace SimpleChainApi.Services
             return dependencyResult;
         }
 
-        private async Task<List<UrlCalled>> ComputeExternalDependenciesAsync()
+        private async Task<List<UrlCalled>> ComputeExternalDependenciesAsync(HttpClient client)
         {
             var result = new List<UrlCalled>();
             var urlList = _configuration[EXTERNAL_DEPENDENCIES];
@@ -51,9 +57,6 @@ namespace SimpleChainApi.Services
                 var urls = urlList.Split(',');
                 if (urls.Any())
                 {
-                    var client = _clientFactory.CreateClient();
-                    client.Timeout = TimeSpan.FromSeconds(5);
-
                     var calls = urls.Select(url => CallExternalUrlAsync(client, url));
                     result.AddRange(await Task.WhenAll(calls));
                 }
@@ -67,7 +70,7 @@ namespace SimpleChainApi.Services
             var sw = Stopwatch.StartNew();
             try
             {
-                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
+                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
                 urlCalledResult.Success = response.IsSuccessStatusCode;
                 urlCalledResult.StatusCode = response.StatusCode;
             }
@@ -79,8 +82,11 @@ namespace SimpleChainApi.Services
             {
                 // Timeout
                 urlCalledResult.Success = false;
+            } 
+            finally
+            {
+                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
             }
-            urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
 
             return urlCalledResult;
         }
@@ -92,10 +98,11 @@ namespace SimpleChainApi.Services
             var sw = Stopwatch.StartNew();
             try
             {
-                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
+                var response = await client.GetAsync(url);
                 urlCalledResult.Success = response.IsSuccessStatusCode;
                 urlCalledResult.StatusCode = response.StatusCode;
                 urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
+
                 if (urlCalledResult.Success)
                 {
                     urlCalledResult.DependencyResult = await response.Content.ReadFromJsonAsync<DependencyResult>();
@@ -103,21 +110,25 @@ namespace SimpleChainApi.Services
             }
             catch (HttpRequestException)
             {
-                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
                 urlCalledResult.Success = false;
             }
             catch (TaskCanceledException)
             {
-                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
                 // Timeout
                 urlCalledResult.Success = false;
             }
-
+            finally
+            {
+                if (0 == urlCalledResult.RequestTimeIsMs)
+                {
+                    urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
+                }
+            }
 
             return urlCalledResult;
         }
 
-        private async Task<List<SelfDependencyCalled>> ComputeSelfDependenciesAsync(int depth)
+        private async Task<List<SelfDependencyCalled>> ComputeSelfDependenciesAsync(HttpClient client, int depth)
         {
             var peerHostsConfigValue = _configuration[SELF_HOSTS_DEPENDENCIES];
             _logger.LogInformation("URL self dependencies {hostPortList}", peerHostsConfigValue);
@@ -130,8 +141,6 @@ namespace SimpleChainApi.Services
                 var peerHosts = peerHostsConfigValue.Split(',');
                 if (peerHosts.Any())
                 {
-                    var client = _clientFactory.CreateClient();
-                    client.Timeout = TimeSpan.FromSeconds(15);
                     var calls = peerHosts.Select(peerHost => CallPeerServiceAsync(client, $"{peerHost}/URLCaller/depth/{newDepth}"));
                     result.AddRange(await Task.WhenAll(calls));
                 }
