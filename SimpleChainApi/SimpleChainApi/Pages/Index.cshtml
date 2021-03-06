@@ -4,35 +4,36 @@
     ViewData["Title"] = "AKS Regulated Cluster Demo Workload";
 }
 
-<h1>AKS Regulated Cluster Demo Workload</h1>
+<h1>AKS Baseline Cluster for Regulated Workloads</h1>
 
 <p>
-    To demonstrate the zero-trust network policies in place. This service will attempt to make a 
-    chain of service calls both within and external to the cluster. Most of the traffic will be blocked
-    by the zero-trust network in place. Only specific traffic will be allowed. This traffic will
-    be managed by a combination of Layer 7 Service Mesh rules, Layer 3/4 NetworkPolicies, NSGs, and
-    Azure Firewall rules.
+    To demonstrate the zero-trust network infrastructure in place, this web front end has kicked off a
+    series of web requests both within and external to the cluster. Most of the traffic will be blocked
+    by the zero-trust network in place. Only specific traffic will be allowed. This traffic is flow is
+    managed by a combination of layer 7 service mesh rules, layer 3/4 Kubernetes NetworkPolicies, Azure
+    NSGs, and Azure Firewall rules with many overlapping rules for defense-in-depth.
 </p>
 <p>
     Not viaulized here is that all of the in-cluster, service-to-service communication is being performed via
-    mTLS. All of the <code>http://microservice-*</code> calls are rewritten as a TLS connection by the mesh
-    while traversing the network.  Also not visualized here is traffic from external to the mesh attempting
-    to access something within the mesh. That too would be blocked by the network policy and mesh rules applied.
+    mTLS and using Kuberentes service authentication to establish trust relationships. All of the 
+    <code>http://microservice-*</code> calls are rewritten as a TLS connection by the mesh while traversing
+    the network.
 </p>
 <p>
-    Allowed In-cluster flows are the following.
-    <ul>
-        <li>Ingress Controller -> web-frontend (in-scope namesapce)</li>
-        <li>web-frontend -> microservice-a (from in-scope namesapce to out-of-scope namespace)</li>
-        <li>microservice-a -> microservice-b (from out-of-scope namesapce to out-of-scope namespace)</li>
-        <li>microservice-b -> microservice-c (from out-of-scope namesapce to in-scope namespace)</li>
+    All internal and external network flows are denied by default. The following are the allowed in-cluster network flows.
+    <ul style="list-style-type: none;">
+        <li>✔️ Ingress Controller ➡️ web-frontend (this site)</li>
+        <li>✔️ web-frontend ➡️ microservice-a</li>
+        <li>✔️ microservice-a ➡️ microservice-b</li>
+        <li>✔️ microservice-b ➡️ microservice-c</li>
     </ul>
 </p>
 <p>
-    Allowed External flows are the following.
-    <ul>
-        <li>TODO</li>
+    Allowed external network flows are the following.
+    <ul style="list-style-type: none;">
+        <li>✔️ web-frontend ➡️ packages.microsoft.com</li>
+        <li>✔️ microservice-a ➡️ packages.microsoft.com</li>
     </ul>
 </p>
-<h2>Network Traffic Results</h2>
+<h2>Network Traffic Call Chain</h2>
 <div>@Html.Raw(Model.FormatedResult)</div>

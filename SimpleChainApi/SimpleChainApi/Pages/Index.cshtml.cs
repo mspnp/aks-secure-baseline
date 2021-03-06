@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Humanizer;
-using Humanizer.Localisation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
@@ -40,7 +39,7 @@ namespace RestAPIClient.Pages
                 _ = int.TryParse(Deep, out deep);
                 var response = await dependencyCallerService.ComputeDependenciesAsync(deep);
                 StringBuilder stringBuilder = new StringBuilder();
-                Format(response, stringBuilder, 0);
+                Format(response, stringBuilder);
                 FormatedResult = stringBuilder.ToString();
             }
             catch (Exception ex)
@@ -49,31 +48,53 @@ namespace RestAPIClient.Pages
             }
         }
 
-        public void Format(DependencyResult dependencyResult, StringBuilder sb, int indent)
+        public void Format(DependencyResult dependencyResult, StringBuilder sb)
         {
             if (dependencyResult != null && (dependencyResult.ExternalDependencies.Any() || dependencyResult.SelfCalled.Any()))
             {
-                sb.AppendLine($"<br><div style='padding-left: {indent} em;'>");
-                sb.AppendLine("<label>External dependencies: </label><br><ul>");
+                var externalCalls = dependencyResult.ExternalDependencies.Count();
+                var internalCalls = dependencyResult.SelfCalled.Count();
+
+                sb.AppendLine($"<p>This service directly attempted the following <strong>{"calls".ToQuantity(externalCalls + internalCalls, ShowQuantityAs.Words)}</strong>.</p>");
+                sb.AppendLine($"<div style='border-left: lightgray 2px dashed; padding-left: 5px; margin-left: 8px;'>");
+                sb.AppendLine($"<label>{"External Call".ToQuantity(externalCalls)}:</label><ul>");
                 foreach (var externalDependency in dependencyResult.ExternalDependencies)
                 {
                     var color = externalDependency.Success ? "text-success" : "text-danger";
-                    var status = externalDependency.StatusCode == 0 ? "Fail to connect" : $" StatusCode: {externalDependency.StatusCode}";
-                    sb.Append($"<li><p class=\"{color}\"><i>{externalDependency.Uri}</i> ({TimeSpan.FromMilliseconds(externalDependency.RequestTimeIsMs).Humanize()})<br>");
-                    sb.Append(status);
-                    sb.Append("</li></p>");
+                    sb.Append($"<li><span class=\"{color}\">");
+                    if (externalDependency.Success)
+                    {
+                        sb.Append($"Successfully connected to <i><strong>{externalDependency.Uri}</strong></i>.");
+                    }
+                    else
+                    {
+                        sb.Append($"Connection to <i><strong>{externalDependency.Uri}</strong></i> could not be established.");
+                    }
+                    sb.Append($" [~{TimeSpan.FromMilliseconds(externalDependency.RequestTimeIsMs).Humanize()}]</span></li>");
                 }
                 sb.Append("</ul>");
 
-                sb.AppendLine("<label>Recursive dependencies: </label><br><ul>");
+                sb.AppendLine($"<label>{"Internal Call".ToQuantity(internalCalls)}:</label><ul>");
                 foreach (var selfCalled in dependencyResult.SelfCalled)
                 {
                     var color = selfCalled.Success ? "text-success" : "text-danger";
-                    var status = selfCalled.StatusCode == 0 ? "Fail to connect" : $" StatusCode: {selfCalled.StatusCode}";
-                    sb.Append($"<li><p class=\"{color}\"><i>{selfCalled.Uri}</i> ({TimeSpan.FromMilliseconds(selfCalled.RequestTimeIsMs).Humanize()})<br>");
-                    sb.Append(status);
-                    Format(selfCalled.DependencyResult, sb, indent + 2);
-                    sb.Append("</li></p>");
+                    sb.Append($"<li><span class=\"{color}\">");
+                    if (selfCalled.Success)
+                    {
+                        sb.Append($"Successfully connected to <i><strong>{selfCalled.Uri}</strong></i>. [~{TimeSpan.FromMilliseconds(selfCalled.RequestTimeIsMs).Humanize()}]</span>");
+
+                        if (selfCalled == null || selfCalled.DependencyResult == null  || (!selfCalled.DependencyResult.ExternalDependencies.Any() && !selfCalled.DependencyResult.SelfCalled.Any()))
+                        { 
+                            sb.Append("<p><i>This service did not attempt any additional connections.</i></p>");
+                        }
+
+                        Format(selfCalled.DependencyResult, sb);
+                    }
+                    else
+                    {
+                        sb.Append($"Connection to <i><strong>{selfCalled.Uri}</strong></i> could not be established. [~{TimeSpan.FromMilliseconds(selfCalled.RequestTimeIsMs).Humanize()}]</span>");
+                    }
+                    sb.Append("</li>");
                 }
                 sb.Append("</ul>");
 
