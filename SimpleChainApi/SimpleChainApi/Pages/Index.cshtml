@@ -7,33 +7,34 @@
 <h1>AKS Baseline Cluster for Regulated Workloads</h1>
 
 <p>
-    To demonstrate the zero-trust network infrastructure in place, this web front end has kicked off a
+    To demonstrate the zero-trust network infrastructure in place, this web frontend has kicked off a
     series of web requests both within and external to the cluster. Most of the traffic will be blocked
-    by the zero-trust network in place. Only specific traffic will be allowed. This traffic is flow is
-    managed by a combination of layer 7 service mesh rules, layer 3/4 Kubernetes NetworkPolicies, Azure
-    NSGs, and Azure Firewall rules with many overlapping rules for defense-in-depth.
+    by the zero-trust network in place -- only specific traffic will be allowed. This traffic flow is
+    managed by a combination of service mesh rules (layer 7), Kubernetes NetworkPolicies (layer 3/4), Azure
+    NSGs (layer 3/4), and Azure Firewall rules with many rules overlapping for defense-in-depth.
 </p>
 <p>
     Not viaulized here is that all of the in-cluster, service-to-service communication is being performed via
     mTLS and using Kuberentes service authentication to establish trust relationships. All of the 
-    <code>http://microservice-*</code> calls are rewritten as a TLS connection by the mesh while traversing
-    the network.
+    <code>http://microservice-*</code> calls are rewritten as a TLS connection by the mesh before traversing
+    the cluster's network.
 </p>
 <p>
-    All internal and external network flows are denied by default. The following are the allowed in-cluster network flows.
+    All internal and external network flows are <strong>denied by default</strong>. The following are the allowed
+    in-cluster network flows. <strong>All flows validate TLS trust chain and require SNI.</strong>
     <ul style="list-style-type: none;">
-        <li>✔️ Ingress Controller ➡️ web-frontend (this site)</li>
-        <li>✔️ web-frontend ➡️ microservice-a</li>
-        <li>✔️ microservice-a ➡️ microservice-b</li>
-        <li>✔️ microservice-b ➡️ microservice-c</li>
+        <li>✔️ Your Kubernetes ingress controller can only receive traffic from Azure Application Gateway.</li>
+        <li>✔️ Your Kubernetes ingress controller can contact this <code>web-frontend</code>, but only on its <code>web</code> port. [<i>cross-namespace call</i>]</li>
+        <li>✔️ <code>web-frontend</code> can contact <code>microservice-a</code>, but only on the <code>/URLCaller/depth/.+</code> route. [<i>cross-namespace call</i>]</li>
+        <li>✔️ <code>microservice-a</code> can contact <code>microservice-b</code>, but only on the <code>/URLCaller/depth/.+</code> route.</li>
+        <li>✔️ <code>microservice-b</code> can contact <code>microservice-c</code>, but only on the <code>/URLCaller/depth/.+</code> route. [<i>cross-namespace call</i>]</li>
     </ul>
 </p>
 <p>
     Allowed external network flows are the following.
     <ul style="list-style-type: none;">
-        <li>✔️ web-frontend ➡️ packages.microsoft.com</li>
-        <li>✔️ microservice-a ➡️ packages.microsoft.com</li>
+        <li>✔️ <code>microservice-a</code> can contact <code>https://packages.microsoft.com</code>.</li>
     </ul>
 </p>
-<h2>Network Traffic Call Chain</h2>
+<h2>Actual Network Traffic Call Chain</h2>
 <div>@Html.Raw(Model.FormatedResult)</div>
