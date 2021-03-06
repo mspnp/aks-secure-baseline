@@ -24,15 +24,7 @@ namespace SimpleChainApi
         {
 
             services.AddControllers();
-            services.AddHttpClient(Options.DefaultName).ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                return new SocketsHttpHandler
-                {
-                    AllowAutoRedirect = false,
-                    UseCookies = false,
-                    ConnectTimeout = TimeSpan.FromSeconds(1)
-                };
-            });
+            services.AddHttpClient();
             services.AddRazorPages();
             services.AddTransient<IDependencyCallerService, DependencyCallerService>();
         }
