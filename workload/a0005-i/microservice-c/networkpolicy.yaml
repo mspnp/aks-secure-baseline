@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: microservice-c
+  labels:
+    app.kubernetes.io/name: a0005
+    app.kubernetes.io/component: microservice-c
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: a0005
+      app.kubernetes.io/component: microservice-c
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        # From a0005-o/microservice-b
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: a0005
+              pci-scope: out-of-scope
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: a0005
+              app.kubernetes.io/component: microservice-b
+      ports:
+        - port: web
+          protocol: TCP
+  egress:
+    - ports:
+        # For our service mesh proxy to talk to its xDS controller
+        - port: 15128

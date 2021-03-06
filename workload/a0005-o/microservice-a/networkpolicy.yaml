@@ -15,7 +15,7 @@ spec:
     - Egress
   ingress:
     - from:
-        # From web-frontend in a0005-i namespace
+        # From a0005-i/web-frontend
         - namespaceSelector:
             matchLabels:
               app.kubernetes.io/name: a0005
@@ -25,10 +25,18 @@ spec:
               app.kubernetes.io/name: a0005
               app.kubernetes.io/component: web-frontend
       ports:
-        # To our pod's port
-        - port: 8080
+        - port: web
           protocol: TCP
   egress:
     - ports:
-       # For our service mesh proxy to talk to its xDS controller
+        # For our service mesh proxy to talk to its xDS controller
         - port: 15128
+    - to:
+        # To microservice-b (same namespace)
+        - podSelector: 
+            matchLabels:
+              app.kubernetes.io/name: a0005
+              app.kubernetes.io/component: microservice-b
+      ports:
+        - port: web
+          protocol: TCP
