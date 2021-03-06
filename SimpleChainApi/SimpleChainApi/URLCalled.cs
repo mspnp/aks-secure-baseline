@@ -19,6 +19,6 @@ namespace SimpleChainApi
         public HttpStatusCode StatusCode { get; set; }
 
         [JsonPropertyName("requestTimeInMs")]
-        public long RequestTimeIsMs { get; internal set; }
+        public long RequestTimeIsMs { get; set; }
     }
 }

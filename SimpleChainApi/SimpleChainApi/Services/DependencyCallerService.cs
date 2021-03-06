@@ -67,10 +67,9 @@ namespace SimpleChainApi.Services
             var sw = Stopwatch.StartNew();
             try
             {
-                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url), HttpCompletionOption.ResponseHeadersRead);
+                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
                 urlCalledResult.Success = response.IsSuccessStatusCode;
                 urlCalledResult.StatusCode = response.StatusCode;
-                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
             }
             catch (HttpRequestException)
             {
@@ -81,6 +80,7 @@ namespace SimpleChainApi.Services
                 // Timeout
                 urlCalledResult.Success = false;
             }
+            urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
 
             return urlCalledResult;
         }
@@ -103,13 +103,16 @@ namespace SimpleChainApi.Services
             }
             catch (HttpRequestException)
             {
+                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
                 urlCalledResult.Success = false;
             }
             catch (TaskCanceledException)
             {
+                urlCalledResult.RequestTimeIsMs = sw.ElapsedMilliseconds;
                 // Timeout
                 urlCalledResult.Success = false;
             }
+
 
             return urlCalledResult;
         }
