@@ -22,7 +22,7 @@
         "environmentVariables": {
             "SELF_HOSTS_DEPENDENCIES": "http://localhost:5001,http://localhost2:5001,http://localhost:5001",
             "ASPNETCORE_ENVIRONMENT": "Development",
-            "EXTERNAL_DEPENDENCIES": "https://whatismyip.io/,https://failure/",
+            "EXTERNAL_DEPENDENCIES": "https://packages.microsoft.com,https://failure",
             "DEPTH": "4"
         },
       "dotnetRunMessages": "true",
