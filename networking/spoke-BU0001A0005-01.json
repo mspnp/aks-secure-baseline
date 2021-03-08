@@ -178,9 +178,24 @@
             "apiVersion": "2020-05-01",
             "name": "[concat('nsg-', variables('clusterVNetName'), '-nodepools')]",
             "location": "[parameters('location')]",
-            "comments": "Default NSG on the AKS nodepools. Feel free to constrict further!",
+            "comments": "Default NSG on the AKS nodepools. Feel free to constrict further both inbound and outbound!",
             "properties": {
-                "securityRules": []
+                "securityRules": [
+                    {
+                        "name": "DenySshInBound",
+                        "properties": {
+                            "description": "No SSH access allowed to nodes.",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
             },
             "resources": [
                 {

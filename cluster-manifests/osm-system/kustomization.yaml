@@ -3,9 +3,6 @@ kind: Kustomization
 namespace: osm-system
 resources:
 - namespace.yaml
-#- resource-quota.yaml
-#- limit-range.yaml
-#- rbac.yaml
 - osm-crds.yaml
 - osm.yaml
 secretGenerator:

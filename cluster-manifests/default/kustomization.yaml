@@ -5,4 +5,3 @@ resources:
 - resource-quota.yaml
 - networkpolicy-denyall.yaml
 - limit-range.yaml
-- rbac.yaml

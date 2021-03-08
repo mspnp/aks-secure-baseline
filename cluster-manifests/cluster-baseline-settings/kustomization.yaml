@@ -4,7 +4,6 @@ namespace: cluster-baseline-settings
 resources:
 - namespace.yaml
 - resource-quota.yaml
-#- networkpolicy-denyall.yaml
 - limit-range.yaml
 - rbac.yaml
 - secrets-store-csi/driver.yaml
