@@ -73,9 +73,24 @@ Not only do we enable them in the steps below by default, but also set up an Azu
    az deployment sub create -f subscription.json -l centralus -p enableAzureDefender=false enforceAzureDefenderAutoDeployPolicies=false
    ```
 
-## Other Azure Policies and Blueprints
+## Azure Security Benchmark
 
-Consider evaluating additional Azure Policies and Azure Blueprints to help guard your subscription from undesirable resource deployments. Here are some to consider.
+Your Azure _subscription_ should have the **Azure Security Benchmark** Azure Policy initiative applied. While we could deploy it in ARM (as above), we don't want to step on anything already existing in your subscription, since you can only have it applied once for Security Center to detect it properly. If you have the ability to apply it without any negative impact on other work your subscription, you can do so by doing the following.
+
+### Steps
+
+1. Open the [**Regulatory Compliance** screen in Security Center](https://portal.azure.com/#blade/Microsoft_Azure_Security/SecurityMenuBlade/22)
+1. Click on **Manage Compliance Policies**
+1. Click on your subscription
+1. Ensure the **Azure Security Benchmark** is applied as the **Security Center default policy**.
+1. You'll want to ensure all relevant standards (e.g. **PCI DSS 3.2.1**) are **Enabled** under **Industry & regulatory standards**
+1. The **Regulatory Compliance** dashboard in Security Center might take an hour or two to reflect any modifications you've made.
+
+**None of the above is required for this walkthrough**, but we want to ensure you're aware of these subscription-level policies and how you can enable them for your final implementation. All subscriptions containing PCI workloads should have the **PCI DSS 3.2.1** Industry & regulatory standards reports enabled.
+
+## Other Azure Policies
+
+Consider evaluating additional Azure Policies to help guard your subscription from undesirable resource deployments. Here are some to consider.
 
 * [PCI-DSS 3.2.1 Blueprint](https://docs.microsoft.com/azure/governance/blueprints/samples/pci-dss-3.2.1/)
 * Allowed locations
@@ -85,7 +100,18 @@ Consider evaluating additional Azure Policies and Azure Blueprints to help guard
 * External accounts with owner permissions should be removed from your subscription
 * Network interfaces should not have public IPs
 
-While we'd like to apply these, and similar, in this walkthrough; we acknowledge that they might be disruptive if you are deploying this walkthrough to a shared subscription with other resources. Please take the time to review the [built-in Azure Policies](https://portal.azure.com/#blade/Microsoft_Azure_Policy/PolicyMenuBlade/Definitions) and the [ability to create your own](https://docs.microsoft.com/azure/governance/policy/tutorials/create-and-manage), and craft policies that will help keep you within regulatory compliance from an Azure Resource location & features perspective.
+Like the Azure Security Benchmark, we'd like to apply these, and similar, in this walkthrough; but we acknowledge that they might be disruptive if you are deploying this walkthrough to a shared subscription with other existing resources. Please take the time to review the [built-in Azure Policies](https://portal.azure.com/#blade/Microsoft_Azure_Policy/PolicyMenuBlade/Definitions) and the [ability to create your own](https://docs.microsoft.com/azure/governance/policy/tutorials/create-and-manage), and craft policies that will help keep you within regulatory compliance from an Azure Resource location & features perspective.
+
+## Compliance documentation
+
+A summary of all of [Microsoft and Azure's compliance offerings are available](https://docs.microsoft.com/compliance/regulatory/offering-home). If you're looking for compliance reports (AOC, Shared Responsibility Matrix), you can access them via the Azure Portal. Your regulatory requirements may require you to have a copy of these documents available.
+
+### Steps
+
+1. Open the [**Regulatory Compliance** screen in Security Center](https://portal.azure.com/#blade/Microsoft_Azure_Security/SecurityMenuBlade/22)
+1. Click on **Audit Reports**
+1. Select your interest (e.g. **PCI**)
+1. Access whatever documents are available (e.g. **PCI DSS 3.2.1 - Azure Shared Responsibility Matrix** or **Azure PCI DSS 3.2.1 AOC Package**)
 
 ### Next step
 
