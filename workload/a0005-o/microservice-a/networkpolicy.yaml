@@ -31,6 +31,7 @@ spec:
     - ports:
         # For our service mesh proxy to talk to its xDS controller
         - port: 15128
+          protocol: TCP
     - to:
         # To microservice-b (same namespace)
         - podSelector: 
@@ -39,4 +40,12 @@ spec:
               app.kubernetes.io/component: microservice-b
       ports:
         - port: web
+          protocol: TCP
+    - to: 
+        # Allow outbound internet traffic to 443. (NSG and Azure Firewall will be final arbitrator on connection access.)
+        # Supports the expected network request to https://packages.microsoft.com
+        - ipBlock:
+            cidr: 0.0.0.0/0
+      ports:
+        - port: 443
           protocol: TCP

@@ -31,6 +31,7 @@ spec:
     - ports:
         # For our service mesh proxy to talk to its xDS controller
         - port: 15128
+          protocol: TCP
     - to:
         # To a0005-o/microservice-a
         - namespaceSelector:
