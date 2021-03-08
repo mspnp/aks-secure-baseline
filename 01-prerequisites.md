@@ -1,6 +1,6 @@
 # Prerequisites
 
-This is the starting point for the end-to-end instructions on deploying the [AKS Baseline for Regulated Industries reference implementation](./README.md). There is required access and tooling you'll need in order to accomplish this. Follow the instructions below and on the subsequent pages so that you can get your environment and subscription ready to proceed with the AKS cluster creation.
+This is the starting point for the end-to-end instructions on deploying the [AKS Baseline for Regulated Workloads reference implementation](./README.md). There is required access and tooling you'll need in order to accomplish this. Follow the instructions below and on the subsequent pages so that you can get your environment and subscription ready to proceed with the AKS cluster creation.
 
 ## Symbols
 

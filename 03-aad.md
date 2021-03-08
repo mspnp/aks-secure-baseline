@@ -1,6 +1,6 @@
 # Prep for Azure Active Directory Integration
 
-In the prior step, you [ensured you met all prerequisites](./01-prerequisites.md) for this reference implementation deployment; now we'll prepare Azure AD for Kubernetes role-based access control (RBAC). This will ensure you have an Azure AD security group(s) and user(s) assigned for group-based Kubernetes control plane access.
+In the prior step, you [procured TLS certificates](./02-ca-certificates.md) for this reference implementation deployment; now we'll prepare Azure AD for Kubernetes role-based access control (RBAC). This will ensure you have Azure AD security group(s) and user(s) assigned for group-based Kubernetes control plane access.
 
 ## Nomenclature
 

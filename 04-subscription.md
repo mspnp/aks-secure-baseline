@@ -1,6 +1,6 @@
 # Prepare Cluster Subscription
 
-In the prior step, you've set up an Azure AD tenant to fullfil your [cluster's control plane (Cluster API) authorization](./03-aad.md) needs for this reference implementation deployment; now we'll prepare the subscription in which will be hosting this workload.
+In the prior step, you've set up an Azure AD tenant to fullfil your [cluster's control plane (Cluster API) authorization](./03-aad.md) needs for this reference implementation deployment; now we'll prepare the subscription in which will be hosting this workload. This includes creating the resource groups and applying some high-level Azure Policies to govern our deployments.
 
 ## Subscription and resource group topology
 

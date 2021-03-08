@@ -14,7 +14,7 @@ Your cluster was deployed with Azure Policy and Azure AD Pod Managed Identity. Y
 
 ### Flux is configured and deployed
 
-Your github repo will be the source of truth for your cluster's configuration. Typically this would be a private repo, but for ease of demonstration, it'll be connected to a public repo (all firewall permissions are set to allow this specific interaction.) You'll be updating a configuration resource for Flux so that it knows to point to your own repo.
+Your GitHub repo will be the source of truth for your cluster's configuration. Typically this would be a private repo, but for ease of demonstration, it'll be connected to a public repo (all firewall permissions are set to allow this specific interaction.) You'll be updating a configuration resource for Flux so that it knows to point to _your own repo_.
 
 ## Steps
 
@@ -22,7 +22,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
 
    ```bash
    cd cluster-manifests
-   grep -lr REPLACE_ME_WITH_YOUR_ACRNAME --include=kustomization.yaml | xargs sed -i "s/REPLACE_ME_WITH_YOUR_ACRNAME/${ACR_NAME}/g"
+   sed -i "s/REPLACE_ME_WITH_YOUR_ACRNAME/${ACR_NAME}/g" */kustomization.yaml
 
    git commit -a -m "Update bootstrap deployments to use images from my ACR instead of public container registries."
    ```
@@ -38,7 +38,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
    git commit -a -m "Update Flux to pull from my fork instead of the upstream Microsoft repo."
    ```
 
-1. Update Key Vault placeholders in your Secret Store provider.
+1. Update Key Vault placeholders in your CSI Secret Store provider.
 
    You'll be using the [Azure Key Vault Provider for Secrets Store CSI driver](https://github.com/Azure/secrets-store-csi-driver-provider-azure) to mount the ingress controller's certificate which you stored in Azure Key Vault. Once mounted, your ingress controller will be able to use it. To make the CSI Provider aware of this certificate, it must be described in a `SecretProviderClass` resource. You'll update the supplied manifest file with this information now.
 
@@ -50,7 +50,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
    git commit -a -m "Update SecretProviderClass to reference my ingress wildcard certificate."
    ```
 
-1. Push those three changes to your repo.
+1. Push those three commits to your repo.
 
    ```bash
    git push
@@ -62,17 +62,17 @@ Your github repo will be the source of truth for your cluster's configuration. T
    If this is the first time you've used Azure Bastion, here is a detailed walk through of this process.
 
    1. Open the [Azure Portal](https://portal.azure.com).
-   2. Navigate to the **rg-bu0001a0005** resource group.
-   3. Click on the Virtual Machine Scale Set resource named **vmss-jumpboxes**.
-   4. Click **Instances**.
-   5. Click the name of any of the two listed instances. E.g. **vmss-jumpboxes_0**
-   6. Click **Connect** -> **Bastion** -> **Use Bastion**.
-   7. Fill in the username field with one of the users from your customized `jumpBoxCloudInit.yml` file. E.g. **opsuser01**
-   8. Select **SSH Private Key from Local File** and select your private key file (e.g. `opsuser01.key`) for that specific user.
-   9. Provide your SSH passphrase in **SSH Passphrase** if your private key is protected with one.
-   10. Click **Connect**.
-   11. For enhanced "copy-on-select" & "paste-on-right-click" support, your browser may request your permission to support those features. It's recommended that you _Allow_ that feature. If you don't, you'll have to use the **>>** flyout on the screen to perform copy & paste actions.
-   12. Welcome to your jump box!
+   1. Navigate to the **rg-bu0001a0005** resource group.
+   1. Click on the Virtual Machine Scale Set resource named **vmss-jumpboxes**.
+   1. Click **Instances**.
+   1. Click the name of any of the two listed instances. E.g. **vmss-jumpboxes_0**
+   1. Click **Connect** -> **Bastion** -> **Use Bastion**.
+   1. Fill in the username field with one of the users from your customized `jumpBoxCloudInit.yml` file. E.g. **opsuser01**
+   1. Select **SSH Private Key from Local File** and select your private key file (e.g. `opsuser01.key`) for that specific user.
+   1. Provide your SSH passphrase in **SSH Passphrase** if your private key is protected with one.
+   1. Click **Connect**.
+   1. For enhanced "copy-on-select" & "paste-on-right-click" support, your browser may request your permission to support those features. It's recommended that you _Allow_ that feature. If you don't, you'll have to use the **>>** flyout on the screen to perform copy & paste actions.
+   1. Welcome to your jump box!
 
    > :warn: The jump box deployed in this walkthrough has only ephemeral disks attached, in which content written to disk will not survive planned or unplanned restarts of the host. Never store anything of value on these jump boxes. They are expected to be fully ephemeral in nature, and in fact could be scaled-to-zero when not in use.
 
@@ -104,7 +104,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
 
 1. _From your Azure Bastion connection_, test cluster access and authenticate as a cluster admin user.
 
-   The following command will force you to authenticate into your AKS cluster's control plane. This will start yet another device login flow. For this one (**Azure Kubernetes Service AAD Client**), log in with a user that is a member of your cluster admin group in the Azure AD tenet you selected to be used for Kubernetes Cluster API RBAC. Also this is where any specified Azure AD conditional access policies would take effect if they had been applied, and ideally you would have first usef PIM JIT access to be assigned to the admin group. Remember, the identity you log in here with is the identity you're performing cluster management commands (e.g. `kubectl`) as.
+   The following command will force you to authenticate into your AKS cluster's control plane. This will start yet another device login flow. For this one (**Azure Kubernetes Service AAD Client**), log in with a user that is a member of your cluster admin group in the Azure AD tenet you selected to be used for Kubernetes Cluster API RBAC. Also this is where any specified Azure AD conditional access policies would take effect if they had been applied, and ideally you would have first usef PIM JIT access to be assigned to the admin group. Remember, the identity you log in here with is the identity you're performing cluster control plane (Cluster API) management commands (e.g. `kubectl`) as.
 
    ```bash
    kubectl get nodes
@@ -148,7 +148,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
    kubectl describe AzureIdentity,AzureIdentityBinding -n ingress-nginx
    ```
 
-   This will show you the Azure Identity Kubernetes resources that were created via the cluster stamp ARM template. This means that any workload in the `ingress-nginx` namespace that wishes to identify itself as the Azure resource `podmi-ingress-controller` can do so by adding a `aadpodidbinding: podmi-ingress-controller` label to their pod deployment. In this walkthrough, our ingress controller, NGINX, will be using that identity. This identity will be used with the Secret Store driver for Key Vault to reference your wildcard ingress TLS certificate.
+   This will show you the Azure Identity Kubernetes resources that were created via the cluster's ARM template. This means that any workload in the `ingress-nginx` namespace that wishes to identify itself as the Azure resource `podmi-ingress-controller` can do so by adding a `aadpodidbinding: podmi-ingress-controller` label to their pod deployment. In this walkthrough, our ingress controller will be using that identity. This identity will be used with the Secret Store driver for Key Vault to reference your wildcard ingress TLS certificate.
 
 1. _From your Azure Bastion connection_, bootstrap Flux. 🛑
 
@@ -164,7 +164,7 @@ Your github repo will be the source of truth for your cluster's configuration. T
    kubectl apply -k flux-system
    ```
 
-   > The Flux CLI does have a built-in bootstrap feature. To ensure everyone using this walkthrough has a consistent experience (not one based on what version of Flux cli they may have installed), we've performed that bootstrap process more "manually" above. Also, you might consider doing the same with your production clusters; as all manifests you apply should be well-known, intentional, and auditable. Doing so will eliminate any guess work from what is or is not being deployed and leads to ultimate repeatability. It does mean that you'll manually be managing some manifests that could otherwise be managed in a more opaque way, and we suggest getting comfortable with that notion. You'll see this play out not just in Flux, but in Open Service Mesh, Falco, etc. Ensure you understand the risks associated with (and benefits gained from) whatever _convenance_ solutions you bring to your cluster (helm, cli "installer" commands, etc.) and you're comfortable with that layer of indirection bring introduced.
+   > The Flux CLI does have a built-in bootstrap feature. To ensure everyone using this walkthrough has a consistent experience (not one based on what version of Flux cli they may have installed), we've performed that bootstrap process more "manually" above via pre-generated manifest files. Also, you might consider doing the same with your production clusters; as all manifests you apply should be well-known, intentional, and auditable. Doing so will eliminate any guess work from what is or is not being deployed and leads to ultimate repeatability. It does mean that you'll manually be managing some manifests that could otherwise be managed in a more opaque way, and we suggest getting comfortable with that notion. You'll see this play out not just in Flux, but in Open Service Mesh, Falco, etc. Ensure you understand the risks associated with (and _benefits_ gained from) whatever _convenance_ solutions you bring to your cluster (helm, cli "installer" commands, etc.) and you're comfortable with that layer of indirection bring introduced.
 
    Validate that flux has been bootstrapped.
 
@@ -180,15 +180,15 @@ Your github repo will be the source of truth for your cluster's configuration. T
 
 Generally speaking, bootstrapping a cluster should be last time you should need to use direct cluster access tools like `kubectl` for day-to-day configuration operations on this cluster (outside of live-site situations). Between ARM for Azure resource definitions and the application of Kubernetes manifests via Flux, all normal configuration activities can be performed without the need to use `kubectl`. You will however use it for the upcoming workload deployment. This is because the SDLC component of workloads are not in scope for this reference implementation, as this is focused the infrastructure and baseline configuration.
 
-**Typically all of the above bootstrapping steps would be codified in a release pipeline so that there would be NO NEED to perform any steps manually.** We're performing the steps manually here, like we have with all content so far, for illustrative purposes of the steps required. Once you have a safe deployment practice documented (both for internal team reference and for compliance needs), you can then put those automate those actions into an auditable deployment pipeline, that combines deploying the infrastructure with the immediate follow up bootstrapping the cluster. Your workload(s) have a distinct lifecycle from your cluster and as such should be managed via separate pipelines. Bootstrapping your cluster should be seen as a direct and _immediate_ continuation of the deployment of your cluster. There is a subnet allocated in this reference specifically for your build agents to perform unattended, "last mile" deployment, and configuration needs for your cluster. There is no compute deployed to that subnet, but typically this is where you'd put in a VM Scale Set as a [GitHub Action Self-Hosted Runner](https://docs.github.com/actions/hosting-your-own-runners/about-self-hosted-runners) or [Azure DevOps Self-Hosted Agent Pool](https://docs.microsoft.com/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops). This compute should be a hardened, minimal installation set, and monitored. Just like a jump box, this compute will span two distinct security zones; in this case, unattended, externally managed GitHub Workflow definitions and your cluster.
+**Typically all of the above bootstrapping steps would be codified in a release pipeline so that there would be NO NEED to perform any steps manually.** We're performing the steps manually here, like we have with all content so far, for illustrative purposes of the steps required. Once you have a safe deployment practice documented (both for internal team reference and for compliance needs), you can then put those actions into an auditable deployment pipeline, that combines deploying the infrastructure with the immediate follow up bootstrapping the cluster. Your workload(s) have a distinct lifecycle from your cluster and as such should be managed via separate pipelines. **Bootstrapping your cluster should be seen as a direct and _immediate_ continuation of the deployment of your cluster.** There is a subnet allocated in this reference implementation called `snet-management-agents` specifically for your build agents to perform unattended, "last mile" deployment, and configuration needs for your cluster. There is no compute deployed to that subnet, but typically this is where you'd put in a VM Scale Set as a [GitHub Action Self-Hosted Runner](https://docs.github.com/actions/hosting-your-own-runners/about-self-hosted-runners) or [Azure DevOps Self-Hosted Agent Pool](https://docs.microsoft.com/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops). This compute should be a hardened, minimal installation set, and monitored. Just like a jump box, this compute will span two distinct security zones; in this case, unattended, externally managed GitHub Workflow definitions and your cluster.
 
 ## Live-site cluster access alternatives
 
-If you wish to add an auditable layer of indirection between users and the cluster for live-site issues, you might consider a ChatOps approach, in which commands against the cluster are executed by dedicated, hardened compute in a subnet like the one above for deployment but are fronted by a Microsoft Teams integration. That gives you the ability to log _all commands_ executed against the cluster, without necessarily building an ops process based exclusively around jump boxes. Also, you may already have an IAM-gated IT automation platform in place in which pre-defined _actions_ can be constructed within. Its action runners would then execute within the ops subnet while the initial invocation of the actions is audited and controlled in the IT automation platform.
+If you wish to add an auditable layer of indirection between users and the cluster for live-site issues, you might consider a ChatOps approach, in which commands against the cluster are executed by dedicated, hardened compute in a subnet like the one above for deployment but are fronted by a Microsoft Teams integration. That gives you the ability to log _all commands_ executed against the cluster, without necessarily building an ops process based exclusively around jump boxes. Also, you may already have an IAM-gated IT automation platform in place in which pre-defined _actions_ can be constructed within. Its action runners would then execute within the `snet-management-agents` subnet while the initial invocation of the actions is audited and controlled in the IT automation platform.
 
 ## GitOps configuration
 
-The GitOps implementation in this reference architecture is intentionally simplistic. Flux is configured to simply monitor manifests in ALL namespaces. It doesn't account for concepts like:
+The GitOps implementation in this reference architecture is _intentionally simplistic_. Flux is configured to simply monitor manifests in ALL namespaces. It doesn't account for concepts like:
 
 * Built-in [bootstrapping support](https://toolkit.fluxcd.io/guides/installation/#bootstrap)
 * [Multi-tenancy](https://github.com/fluxcd/flux2-multi-tenancy)
@@ -218,11 +218,11 @@ Common features offered in ISV solutions like these:
 * Workload level CIS benchmark reporting
 * Managed network isolation and enhanced observability features (such as network flow visualizers)
 
-Your dependency on or choice of in-cluster tooling to achieve your compliance needs cannot be suggested as a "one-size fits all" in this reference implementation. However, as a reminder of the need to solve for these, the Flux bootstrapping above deployed a _placeholder_ FIM and AV solution. **They are not functioning as a real FIM or AV**, simply a visual reminder that you will need to bring a suitable solution for compliance concerns.
+Your dependency on or choice of in-cluster tooling to achieve your compliance needs cannot be suggested as a "one-size fits all" in this reference implementation. However, as a reminder of the need to solve for these, the Flux bootstrapping above deployed a _placeholder_ FIM and AV solution. **They are not functioning as a real FIM or AV**, simply a visual reminder that you will likely need to bring a suitable solution for compliance concerns.
 
-This reference implementation also installs a very simplistic deployment of [Falco](https://falco.org/). It is not configured for alerts, nor tuned to any specific needs. It uses the default rules as they were defined when its manifests were generated. This is also being installed for illustrative purposes, and you're encouraged to evaluate if a solution like Falco is relevant to you. If so, in your final implementation, review and tune its deployment to fit your needs (E.g. add custom rules like [CVE detection](https://artifacthub.io/packages/search?ts_query_web=cve&org=falco), [sudo usage](https://artifacthub.io/packages/falco/security-hub/admin-activities), [basic FIM](https://artifacthub.io/packages/falco/security-hub/file-integrity-monitoring), [SSH Connection monitoring](https://artifacthub.io/packages/falco/security-hub/ssh-connections), and [Traefik containment](https://artifacthub.io/packages/falco/security-hub/traefik)). This tooling, as most security tooling will be, is highly-privileged within your cluster. Usually running as DaemonSets with access to the underlying node in a manor that is well beyond any typical workload in your cluster. Remember to consider the runtime compute requirements of your security tooling when sizing your cluster, as these can often be overlooked when initial cluster sizing conversations are happening.
+This reference implementation also installs a very basic deployment of [Falco](https://falco.org/). It is not configured for alerts, nor tuned to any specific needs. It uses the default rules as they were defined when its manifests were generated. This is also being installed for illustrative purposes, and you're encouraged to evaluate if a solution like Falco is relevant to you. If so, in your final implementation, review and tune its deployment to fit your needs (E.g. add custom rules like [CVE detection](https://artifacthub.io/packages/search?ts_query_web=cve&org=falco), [sudo usage](https://artifacthub.io/packages/falco/security-hub/admin-activities), [basic FIM](https://artifacthub.io/packages/falco/security-hub/file-integrity-monitoring), [SSH Connection monitoring](https://artifacthub.io/packages/falco/security-hub/ssh-connections), and [Traefik containment](https://artifacthub.io/packages/falco/security-hub/traefik)). This tooling, _as most security tooling will be_, is **highly-privileged within your cluster**. Usually running as DaemonSets with access to the underlying node in a manor that is well beyond any typical workload in your cluster. Remember to consider the runtime compute and networking requirements of your security tooling when sizing your cluster, as these can often be overlooked when initial cluster sizing conversations are happening.
 
-It's worth repeating again, **most regulated customers are bringing ISV or open source security solutions to their clusters**. Azure Kubernetes Service is a managed Kubernetes platform, it does not imply that you will exclusively be using Microsoft products/solutions to solve your requirements. For the most part, after the deployment of the infrastructure and some out-of-the-box addons (like Azure Policy, Azure Monitor, AAD Pod Identity), you're in charge of what you choose to run in your hosted Kubernetes platform. Bring the business and compliance solving solutions you need to the cluster from the vast and ever-growing Kubernetes ecosystem.
+It's worth repeating again, **most customers with regulated workloads are bringing ISV or open source security solutions to their clusters**. Azure Kubernetes Service is a managed Kubernetes platform, it does not imply that you will exclusively be using Microsoft products/solutions to solve your requirements. For the most part, after the deployment of the infrastructure and some out-of-the-box addons (like Azure Policy, Azure Monitor, AAD Pod Identity), you're in charge of what you choose to run in your hosted Kubernetes platform. Bring the business and compliance solving solutions you need to the cluster from the [vast and ever-growing Kubernetes and CNCF ecosystem](https://landscape.cncf.io/?fullscreen=yes).
 
 **You should ensure all necessary tooling and related reporting/alerting is applied as part of your _initial bootstrapping process_ to ensure coverage _immediately_ after cluster creation.**
 

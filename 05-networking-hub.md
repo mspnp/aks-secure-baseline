@@ -1,6 +1,6 @@
 # Deploy the Regional Hub Network
 
-Now that your subscription has your [Azure Policies and target resource-groups in place](./04-subscription.md), we'll continue by deploying the regional hub.
+Now that your subscription has your [Azure Policies and target resource-groups in place](./04-subscription.md), we'll continue by deploying the regional hub which will be the observable egress point for all traffic in connected spokes.
 
 ## Networking in this architecture
 

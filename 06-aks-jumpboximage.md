@@ -1,6 +1,6 @@
 # Create the AKS Jump Box Image
 
-The first foundational networking component, the regional hub, [has been deployed](./04-networking-hub.md). Before we dive into the cluster spoke and cluster itself, we need to take a quick detour to plan and talk about cluster control plane access.
+The first foundational networking component, the regional hub, [has been deployed](./05-networking-hub.md). Before we dive into the cluster spoke and cluster itself, we need to take a quick detour to plan and talk about cluster control plane access.
 
 ## Planning access to your cluster's control plane
 
