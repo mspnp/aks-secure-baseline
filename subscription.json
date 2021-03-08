@@ -34,12 +34,16 @@
         "rgName-bu0001A0005": "rg-bu0001a0005",
         "policyDefinitionId-AllowedResources": "/providers/Microsoft.Authorization/policyDefinitions/a08ec900-254a-4555-9bf5-e42af04b5c5c",
         "policyDefinitionId-DenyAksWithoutPolicy": "/providers/Microsoft.Authorization/policyDefinitions/0a15ec92-a229-4763-bb14-0ea34a568f8d",
+        "policyDefinitionId-DenyAksWithoutRbac": "/providers/Microsoft.Authorization/policyDefinitions/ac4a19c2-fa67-49b4-8ae5-0b2e78c49457",
+        "policyDefinitionId-DenyOldAks": "/providers/Microsoft.Authorization/policyDefinitions/ac4a19c2-fa67-49b4-8ae5-0b2e78c49457",
         "policyDefinitionName-EnableAksDefender": "[guid(subscription().id, 'EnableDefenderForAks')]",
         "policyDefinitionName-EnableAcrDefender": "[guid(subscription().id, 'EnableDefenderForAcr')]",
         "policyDefinitionName-EnableAkvDefender": "[guid(subscription().id, 'EnableDefenderForAkv')]",
         "policyDefinitionName-DenyPublicAks": "[guid(subscription().id, 'DenyPublicAks')]",
         "policyDefinitionName-DenyAksWithoutPolicy": "[guid(subscription().id, 'DenyAksWithoutPolicy')]",
         "policyDefinitionName-DenyAagWithoutWaf": "[guid(subscription().id, 'DenyAagWithoutWaf')]",
+        "policyDefinitionName-DenyAksWithoutRbac": "[guid(subscription().id, 'DenyAksWithoutRbac')]",
+        "policyDefinitionName-DenyOldAks": "[guid(subscription().id, 'DenyOldAksVersions')]",
         "policySetDefinitionName-EnableDefender": "[guid(subscription().id, 'EnableDefender')]",
         "roleId-SecurityAdmin": "/providers/Microsoft.Authorization/roleDefinitions/fb1c8493-542b-48eb-b624-b4c8fea62acd",
         "deploymentResourceRegion": "centralus" // This region is used as the default for all generic resource groups and for any additional deployment resources. No resources are actually deployed to this resource group.
@@ -368,7 +372,7 @@
                             "apiVersion": "2019-09-01",
                             "comments": "Allowed Resources Policy applied to the hubs RG to only allow select networking and observation resources.",
                             "properties": {
-                                "displayName": "[concat('[', variables('rgName-Hubs'), '] ', reference(variables('policyDefinitionId-AllowedResources'), '2020-09-01').displayName)]",
+                                "displayName": "[take(concat('[', variables('rgName-Hubs'), '] ', reference(variables('policyDefinitionId-AllowedResources'), '2020-09-01').displayName), 125)]",
                                 "description": "List of supported resources for our enterprise hubs resource group",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-Hubs'))]",
                                 "policyDefinitionId": "[variables('policyDefinitionId-AllowedResources')]",
@@ -418,7 +422,7 @@
                             "apiVersion": "2019-09-01",
                             "comments": "Allowed Resources Policy applied to the spoke resource group to only allow select networking resources.",
                             "properties": {
-                                "displayName": "[concat('[', variables('rgName-Spokes'), '] ', reference(variables('policyDefinitionId-AllowedResources'), '2020-09-01').displayName)]",
+                                "displayName": "[take(concat('[', variables('rgName-Spokes'), '] ', reference(variables('policyDefinitionId-AllowedResources'), '2020-09-01').displayName), 125)]",
                                 "description": "List of supported resources for our enterprise spokes resource group",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-Spokes'))]",
                                 "policyDefinitionId": "[variables('policyDefinitionId-AllowedResources')]",
@@ -464,7 +468,7 @@
                             "apiVersion": "2020-03-01",
                             "comments": "Allowed Resources Policy applied to the appliction resource group to only allow select resources per workload requirements.",
                             "properties": {
-                                "displayName": "[concat('[', variables('rgName-bu0001A0005'), '] ', reference(variables('policyDefinitionId-AllowedResources'), '2020-09-01').displayName)]",
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(variables('policyDefinitionId-AllowedResources'), '2020-09-01').displayName), 125)]",
                                 "description": "List of supported resources for our workload resource group",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
                                 "policyDefinitionId": "[variables('policyDefinitionId-AllowedResources')]",
@@ -504,7 +508,7 @@
                             "apiVersion": "2020-03-01",
                             "comments": "Deny public AKS clusters policy applied to the appliction resource group.",
                             "properties": {
-                                "displayName": "[concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyPublicAks')), '2020-09-01').displayName)]",
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyPublicAks')), '2020-09-01').displayName), 125)]",
                                 "description": "Only support private AKS clusters, deny any other.",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
                                 "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyPublicAks'))]",
@@ -517,7 +521,7 @@
                             "apiVersion": "2020-03-01",
                             "comments": "Deny AKS clusters that do not have Azure Policy enabled in the appliction resource group.",
                             "properties": {
-                                "displayName": "[concat('[', variables('rgName-bu0001A0005'), '] ', reference(variables('policyDefinitionId-DenyAksWithoutPolicy'), '2020-09-01').displayName)]",
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(variables('policyDefinitionId-DenyAksWithoutPolicy'), '2020-09-01').displayName), 125)]",
                                 "description": "Only support AKS clusters with Azure Policy enabled, deny any other.",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
                                 "policyDefinitionId": "[variables('policyDefinitionId-DenyAksWithoutPolicy')]",
@@ -530,10 +534,36 @@
                             "apiVersion": "2020-03-01",
                             "comments": "Deny public AKS clusters policy applied to the appliction resource group.",
                             "properties": {
-                                "displayName": "[concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyAagWithoutWaf')), '2020-09-01').displayName)]",
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyAagWithoutWaf')), '2020-09-01').displayName), 125)]",
                                 "description": "Only allow Azure Application Gateway SKU with WAF support.",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
                                 "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyAagWithoutWaf'))]",
+                                "parameters": {}
+                            }
+                        },
+                        {
+                            "name": "[guid(variables('policyDefinitionName-DenyAksWithoutRbac'), variables('rgName-bu0001A0005'))]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2020-03-01",
+                            "comments": "Deny AKS clusters without RBAC policy applied to the appliction resource group.",
+                            "properties": {
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyAksWithoutRbac')), '2020-09-01').displayName), 125)]",
+                                "description": "Only allow AKS with RBAC support enabled.",
+                                "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
+                                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyAksWithoutRbac'))]",
+                                "parameters": {}
+                            }
+                        },
+                        {
+                            "name": "[guid(variables('policyDefinitionName-DenyOldAks'), variables('rgName-bu0001A0005'))]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2020-03-01",
+                            "comments": "Deny AKS clusters on old version policy applied to the appliction resource group.",
+                            "properties": {
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyOldAks')), '2020-09-01').displayName), 125)]",
+                                "description": "Disallow older AKS versions.",
+                                "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
+                                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyOldAks'))]",
                                 "parameters": {}
                             }
                         }
