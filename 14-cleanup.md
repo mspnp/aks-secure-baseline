@@ -1,6 +1,6 @@
 # Clean up
 
-After you are done exploring your deployed [AKS secure baseline cluster](./), you'll want to delete the created Azure resources to prevent undesired costs from accruing. Follow these steps to delete all resources created as part of this reference implementation.
+After you are done exploring your deployed [AKS Baseline Cluster for Regulated Workloads](./), you'll want to delete the created Azure resources to prevent undesired costs from accruing. Follow these steps to delete all resources created as part of this reference implementation.
 
 ## Steps
 
@@ -26,7 +26,15 @@ After you are done exploring your deployed [AKS secure baseline cluster](./), yo
 
 1. If any temporary changes were made to Azure AD or Azure RBAC permissions consider removing those as well.
 
-1. [Remove the Azure Policy assignments](https://portal.azure.com/#blade/Microsoft_Azure_Policy/PolicyMenuBlade/Compliance) scoped to the cluster's resource group. To identify those created by this implementation, look for ones that are prefixed with `[your-cluster-name] `.
+1. [Remove the Azure Policy assignments](https://portal.azure.com/#blade/Microsoft_Azure_Policy/PolicyMenuBlade/Compliance) scoped to the cluster's resource group. To identify those created by this implementation, look for ones that are prefixed with `[your-cluster-name] ` and `[your-resource-group-name] `.
+
+1. If Azure Security center was turned on temporarily for this, consider turning that off as well.
+
+   **Do not disable any security controls that were already in place on your subscription before starting this walkthrough.**
+
+   1. Go to the [**Pricings & Settings** view in Security Center](https://portal.azure.com/#blade/Microsoft_Azure_Security/SecurityMenuBlade/24)
+   1. Select your subscription.
+   1. Turn "Off" any **Azure Defender for _topic_** that you might have enabled exclusively due to this walkthrough only.
 
 ### Next step
 
