@@ -130,6 +130,10 @@ Ultimately all layers build on each other, such that a failure/misconfiguration 
 
 Your compliant cluster architecture requires a compliant inner loop development practice as well, following your documented Secure SDLC. Since this walkthrough is not focused on inner loop development practices, please dedicate time to documenting your SDL, safe deployment practices, your workload's supply chain, and hardening techniques. Consider using solutions like [GitHub Action's container-scan](https://github.com/Azure/container-scan) to check for container-level hardening concerns -- CIS benchmark alignment, CVE detections, etc. even before workloads are pushed to your container registry.
 
+## Container security practices
+
+This reference implementation doesn't dive into security best practices of your code, your base image selection, your `Dockerfile` layers, or your Kubernetes `Deployment` manifest.  None of that content is really specific to the architecture presented here and are best practices regardless if your workload is regulated or not. For guidance on hardening container images, see: TODO GET LINK.
+
 ### Next step
 
 :arrow_forward: [End-to-End Validation](./13-validation.md)

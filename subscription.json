@@ -35,7 +35,7 @@
         "policyDefinitionId-AllowedResources": "/providers/Microsoft.Authorization/policyDefinitions/a08ec900-254a-4555-9bf5-e42af04b5c5c",
         "policyDefinitionId-DenyAksWithoutPolicy": "/providers/Microsoft.Authorization/policyDefinitions/0a15ec92-a229-4763-bb14-0ea34a568f8d",
         "policyDefinitionId-DenyAksWithoutRbac": "/providers/Microsoft.Authorization/policyDefinitions/ac4a19c2-fa67-49b4-8ae5-0b2e78c49457",
-        "policyDefinitionId-DenyOldAks": "/providers/Microsoft.Authorization/policyDefinitions/ac4a19c2-fa67-49b4-8ae5-0b2e78c49457",
+        "policyDefinitionId-DenyOldAks": "/providers/Microsoft.Authorization/policyDefinitions/fb893a29-21bb-418c-a157-e99480ec364c",
         "policyDefinitionName-EnableAksDefender": "[guid(subscription().id, 'EnableDefenderForAks')]",
         "policyDefinitionName-EnableAcrDefender": "[guid(subscription().id, 'EnableDefenderForAcr')]",
         "policyDefinitionName-EnableAkvDefender": "[guid(subscription().id, 'EnableDefenderForAkv')]",
@@ -547,10 +547,10 @@
                             "apiVersion": "2020-03-01",
                             "comments": "Deny AKS clusters without RBAC policy applied to the appliction resource group.",
                             "properties": {
-                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyAksWithoutRbac')), '2020-09-01').displayName), 125)]",
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(variables('policyDefinitionId-DenyAksWithoutRbac'), '2020-09-01').displayName), 125)]",
                                 "description": "Only allow AKS with RBAC support enabled.",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
-                                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyAksWithoutRbac'))]",
+                                "policyDefinitionId": "[variables('policyDefinitionId-DenyAksWithoutRbac')]",
                                 "parameters": {}
                             }
                         },
@@ -560,10 +560,10 @@
                             "apiVersion": "2020-03-01",
                             "comments": "Deny AKS clusters on old version policy applied to the appliction resource group.",
                             "properties": {
-                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyOldAks')), '2020-09-01').displayName), 125)]",
+                                "displayName": "[take(concat('[', variables('rgName-bu0001A0005'), '] ', reference(variables('policyDefinitionId-DenyOldAks'), '2020-09-01').displayName), 125)]",
                                 "description": "Disallow older AKS versions.",
                                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('rgName-bu0001A0005'))]",
-                                "policyDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/policyDefinitions', variables('policyDefinitionName-DenyOldAks'))]",
+                                "policyDefinitionId": "[variables('policyDefinitionId-DenyOldAks')]",
                                 "parameters": {}
                             }
                         }
