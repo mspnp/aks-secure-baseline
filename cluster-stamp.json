@@ -2381,11 +2381,7 @@
                 "displayName": "[take(concat('[', variables('clusterName'),'] ', reference(variables('policyResourceIdCustomerManagedEncryption'), '2020-09-01').displayName), 125)]",
                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', resourceGroup().name)]",
                 "policyDefinitionId": "[variables('policyResourceIdCustomerManagedEncryption')]",
-                "parameters": {
-                    "effect": {
-                        "value": "audit"
-                    }
-                }
+                "parameters": {}
             }
         },
         {
@@ -2587,14 +2583,7 @@
                 "displayName": "[take(concat('[', variables('clusterName'),'] ', reference(variables('policyResourceIdEncryptionAtHost'), '2020-09-01').displayName), 125)]",
                 "scope": "[subscriptionResourceId('Microsoft.Resources/resourceGroups', resourceGroup().name)]",
                 "policyDefinitionId": "[variables('policyResourceIdEncryptionAtHost')]",
-                "parameters": {
-                    "excludedNamespaces": {
-                        "value": []
-                    },
-                    "effect": {
-                        "value": "audit"
-                    }
-                }
+                "parameters": {}
             }
         },
         {

@@ -88,7 +88,7 @@ Once web traffic hits Azure Application Gateway, public-facing TLS is terminated
 
 1. Remove the temporary import certificates permissions for current user.
 
-   > The Azure Key Vault Policy for your user was a temporary policy to allow you to import the certificate for this walkthrough. In actual deployments, you would manage these access policies via your ARM templates using [Azure RBAC for Key Vault data plane](https://docs.microsoft.com/azure/key-vault/general/secure-your-key-vault#data-plane-and-access-policies).
+   > The Azure Key Vault Policy for your user was a temporary policy to allow you to import the certificate for this walkthrough. In actual deployments, you would manage access policies like these via your ARM templates using [Azure RBAC for Key Vault data plane](https://docs.microsoft.com/azure/key-vault/general/secure-your-key-vault#data-plane-and-access-policies).
 
    ```bash
    az keyvault delete-policy --upn $(az account show --query user.name -o tsv) -n $KEYVAULT_NAME
@@ -101,10 +101,6 @@ At this point, you have a cluster and its adjacent resources deployed, but it is
 In this reference implementation, Azure Policy _and_ Azure Firewall are blocking all container registries other than Microsoft Container Registry and your private ACR instance deployed with this reference implementation. This will protect your cluster from unapproved registries being used; which may prevent issues while trying to pull images from a registry which doesn't provide an appropriate SLO and also help meet compliance needs for your container image supply chain.
 
 This deployment creates an SLA-backed Azure Container Registry for your cluster's needs. Your organization may have a central container registry for you to use, or your registry may be tied specifically to your application's infrastructure (as demonstrated in this implementation). **Only use container registries that satisfy the availability and compliance needs of your workload.**
-
-## Operating System (OS) and Kubelet config
-
-The cluster above deploys the default settings for OS and Kubelet configuration that is a recommended starting point for most workloads. If your workload requires kubelet or OS/kernel changes, see [Customize node configuration](https://docs.microsoft.com/azure/aks/custom-node-configuration). Most of these settings are exposed specifically as a mechanism to tune for specific workload performance characteristics (high outbound connections, high filesystem access, large number of concurrent connections, etc.), and not as an OS hardening affordance.
 
 ### Next step
 
