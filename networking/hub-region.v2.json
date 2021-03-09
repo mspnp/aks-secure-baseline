@@ -964,6 +964,10 @@
                             {
                                 "category": "AzureFirewallNetworkRule",
                                 "enabled": true
+                            },
+                            {
+                                "category": "AzureFirewallDnsProxy",
+                                "enabled": true
                             }
                         ],
                         "metrics": [
