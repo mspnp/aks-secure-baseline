@@ -17,7 +17,7 @@ data:
   prometheus_scraping: "true"
   tracing_enable: "false"
   use_https_ingress: "true"
-  service_cert_validity_duration: "24h"
+  service_cert_validity_duration: "168h"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
