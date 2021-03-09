@@ -33,7 +33,7 @@ spec:
       serviceAccount: microservice-a-sa
       containers:
       - name: microservice-a
-        image: YOUR_ACR.azurecr.io/live/a0005/chain-api:1.1
+        image: YOUR_ACR.azurecr.io/live/a0005/chain-api:1.0
         imagePullPolicy: IfNotPresent
         ports:
         - name: web

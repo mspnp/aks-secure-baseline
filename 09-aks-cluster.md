@@ -58,7 +58,7 @@ Now that the [hub-spoke network is provisioned](./08-cluster-networking.md), the
    > :eyes: If you're curious to see what changed in the cluster stamp, [view the diff](https://diffviewer.azureedge.net/?l=https://raw.githubusercontent.com/mspnp/aks-secure-baseline/regulated/cluster-stamp.json&r=https://raw.githubusercontent.com/mspnp/aks-secure-baseline/regulated/cluster-stamp.v2.json).
 
    ```bash
-   # [This takes about 5 minutes.]
+   # [This takes about five minutes.]
    az deployment group create -g rg-bu0001a0005 -f cluster-stamp.v2.json -p targetVnetResourceId=${RESOURCEID_VNET_CLUSTERSPOKE} clusterAdminAadGroupObjectId=${AADOBJECTID_GROUP_CLUSTERADMIN} k8sControlPlaneAuthorizationTenantId=${TENANTID_K8SRBAC} appGatewayListenerCertificate=${APP_GATEWAY_LISTENER_CERTIFICATE} aksIngressControllerCertificate=${AKS_INGRESS_CONTROLLER_CERTIFICATE_BASE64} jumpBoxImageResourceId=${RESOURCEID_IMAGE_JUMPBOX} jumpBoxCloudInitAsBase64=${CLOUDINIT_BASE64}
 
    # Or if you used the parameters file...

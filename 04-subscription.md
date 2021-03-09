@@ -65,8 +65,8 @@ Not only do we enable them in the steps below by default, but also set up an Azu
    ```bash
    az account show
 
-   # if not, set the right subscription
-   #az account set -s YOUR-SUBSCRIPTION-ID
+   # If not, select the correct subscription
+   # az account set -s <subscription name or id>
    ```
 
 1. Perform subscription-level deployment.
