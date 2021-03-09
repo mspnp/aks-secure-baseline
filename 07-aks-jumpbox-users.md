@@ -24,11 +24,11 @@ Following the steps below, you'll end up with a SSH public-key-based solution th
       cat opsuser01.key.pub
       ```
 
+      **Enter a passphrase when requested** (do not leave empty) and note where the public and private key file was saved. The _public_ key file _contents_ (`opsuser01.key.pub` in the example above) is what is added to the `ssh-authorized-keys` array in `jumpBoxCloudInit.yml`. You'll need the username, the private key file (`opsuser01.key`), and passphrase later in this walkthrough.
+
       > On Windows, as an alternative to bash in WSL, you can use a solution like PuTTYGen found in the [PuTTY installer](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html).
       >
       > Azure also has a SSH Public Key resources type that allows you to [generate SSH keys](https://docs.microsoft.com/azure/virtual-machines/ssh-keys-portal) and keep public keys available as a managed resource.
-
-      **Enter a passphrase when requested** (do not leave empty) and note where the public and private key file was saved. The _public_ key file _contents_ (`opsuser01.key.pub` in the example above) is what is added to the `ssh-authorized-keys` array in `jumpBoxCloudInit.yml`. You'll need the username, the private key file (`opsuser01.key`), and passphrase later in this walkthrough.
 1. _Optional 🛑._ Remove the `- default` line to remove the default admin user from the jump box.
 
    If you leave the `- default` line in the file, then the default admin user (defined in the cluster's ARM template as pseudo-random name to discourage usage) will also exist on this jump box. We do not provide any instructions on setting up this default user to be a valid user you can access, and as such you might wish to simply remove it from the jump box. That user has unrestricted sudo access, by default. Unfortunately, you cannot directly deploy the jump box infrastructure with this user removed, so removing it via cloud-init is a common resolution -- by not including `- default` in this file.

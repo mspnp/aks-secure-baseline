@@ -127,4 +127,4 @@ A summary of all of [Microsoft and Azure's compliance offerings are available](h
 
 ### Next step
 
-:arrow_forward: [Deploy the regional hub network](./04-networking-hub.md).
+:arrow_forward: [Deploy the regional hub network](./05-networking-hub.md).

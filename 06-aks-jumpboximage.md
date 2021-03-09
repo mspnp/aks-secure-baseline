@@ -50,7 +50,7 @@ We are going to be using Azure Image Builder to generate a Kubernetes-specific j
    ```bash
    RESOURCEID_SUBNET_AIB=$(az deployment group show -g rg-enterprise-networking-spokes -n spoke-BU0001A0005-00 --query properties.outputs.imageBuilderSubnetResourceId.value -o tsv)
 
-   # [This takes about three minutes to run.]
+   # [This takes about five minutes to run.]
    az deployment group create -g rg-enterprise-networking-hubs -f networking/hub-region.v1.json -p location=eastus2 aksImageBuilderSubnetResourceId="${RESOURCEID_SUBNET_AIB}"
    ```
 
