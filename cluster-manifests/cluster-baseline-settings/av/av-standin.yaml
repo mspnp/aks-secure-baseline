@@ -11,6 +11,7 @@ spec:
       labels:
         app: dummy-av
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: dummy-av
         image: busybox

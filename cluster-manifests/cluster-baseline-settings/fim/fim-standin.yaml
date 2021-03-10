@@ -11,6 +11,7 @@ spec:
       labels:
         app: dummy-fim
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: dummy-fim
         image: busybox
