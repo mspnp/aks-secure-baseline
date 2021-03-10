@@ -77,12 +77,14 @@ spec:
   selector:
     matchLabels:
       name: kured
+      pci-scope: out-of-scope
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
         name: kured
+        pci-scope: out-of-scope
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"

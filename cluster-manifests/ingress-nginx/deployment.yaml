@@ -259,6 +259,7 @@ metadata:
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: controller
     aadpodidbinding: podmi-ingress-controller
+    pci-scope: out-of-scope
   name: ingress-nginx-controller
   namespace: ingress-nginx
 spec:
@@ -267,6 +268,7 @@ spec:
       app.kubernetes.io/name: ingress-nginx
       app.kubernetes.io/instance: ingress-nginx
       app.kubernetes.io/component: controller
+      pci-scope: out-of-scope
   revisionHistoryLimit: 10
   minReadySeconds: 0
   template:
@@ -276,6 +278,7 @@ spec:
         app.kubernetes.io/instance: ingress-nginx
         app.kubernetes.io/component: controller
         aadpodidbinding: podmi-ingress-controller
+        pci-scope: out-of-scope
     spec:
       dnsPolicy: ClusterFirst
       containers:
@@ -511,6 +514,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: admission-webhook
+    pci-scope: out-of-scope
   namespace: ingress-nginx
 spec:
   template:
@@ -520,6 +524,7 @@ spec:
         app.kubernetes.io/name: ingress-nginx
         app.kubernetes.io/instance: ingress-nginx
         app.kubernetes.io/component: admission-webhook
+        pci-scope: out-of-scope
     spec:
       containers:
         - name: create
@@ -562,6 +567,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: admission-webhook
+    pci-scope: out-of-scope
   namespace: ingress-nginx
 spec:
   template:
@@ -571,6 +577,7 @@ spec:
         app.kubernetes.io/name: ingress-nginx
         app.kubernetes.io/instance: ingress-nginx
         app.kubernetes.io/component: admission-webhook
+        pci-scope: out-of-scope
     spec:
       containers:
         - name: patch

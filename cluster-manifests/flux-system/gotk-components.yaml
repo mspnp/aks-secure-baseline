@@ -149,6 +149,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: flux-system
     control-plane: controller
+    pci-scope: out-of-scope
   name: kustomize-controller
   namespace: flux-system
 spec:
@@ -156,6 +157,7 @@ spec:
   selector:
     matchLabels:
       app: kustomize-controller
+      pci-scope: out-of-scope
   template:
     metadata:
       annotations:
@@ -163,6 +165,7 @@ spec:
         prometheus.io/scrape: "true"
       labels:
         app: kustomize-controller
+        pci-scope: out-of-scope
     spec:
       containers:
       - args:
@@ -223,6 +226,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: flux-system
     control-plane: controller
+    pci-scope: out-of-scope
   name: source-controller
   namespace: flux-system
 spec:
@@ -230,6 +234,7 @@ spec:
   selector:
     matchLabels:
       app: source-controller
+      pci-scope: out-of-scope
   strategy:
     type: Recreate
   template:
@@ -239,6 +244,7 @@ spec:
         prometheus.io/scrape: "true"
       labels:
         app: source-controller
+        pci-scope: out-of-scope
     spec:
       containers:
       - args:

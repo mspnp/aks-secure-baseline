@@ -10,17 +10,20 @@ metadata:
     chart: "falco-1.7.3"
     release: "aks"
     heritage: "Helm"
+    pci-scope: out-of-scope
 spec:
   selector:
     matchLabels:
       app: aks-falco
       role: security
+      pci-scope: out-of-scope
   template:
     metadata:
       name: aks-falco
       labels:
         app: aks-falco
         role: security
+        pci-scope: out-of-scope
       annotations:
         checksum/config: c8d2718dd632fb0254f5f202c1063b5bbeb21382d762acbe2390da1ea1267b48
         checksum/rules: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b

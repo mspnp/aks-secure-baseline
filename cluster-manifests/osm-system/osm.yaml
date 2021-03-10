@@ -124,15 +124,18 @@ metadata:
     app: osm-controller
     meshName: osm
     enforceSingleMesh: "true"
+    pci-scope: out-of-scope
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: osm-controller
+      pci-scope: out-of-scope
   template:
     metadata:
       labels:
         app: osm-controller
+        pci-scope: out-of-scope
       annotations:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9091'

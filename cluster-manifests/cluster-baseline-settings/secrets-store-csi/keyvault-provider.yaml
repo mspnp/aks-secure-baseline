@@ -11,6 +11,7 @@ kind: DaemonSet
 metadata:
   labels:
     app: csi-secrets-store-provider-azure
+    pci-scope: out-of-scope
   name: csi-secrets-store-provider-azure
 spec:
   updateStrategy:
@@ -18,12 +19,14 @@ spec:
   selector:
     matchLabels:
       app: csi-secrets-store-provider-azure
+      pci-scope: out-of-scope
   template:
     metadata:
       labels:
         app: csi-secrets-store-provider-azure
         app.kubernetes.io/name: csi-secrets-store-provider-azure
         app.kubernetes.io/component: csi-provider
+        pci-scope: out-of-scope
     spec:
       serviceAccountName: csi-secrets-store-provider-azure
       hostNetwork: true

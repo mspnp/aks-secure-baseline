@@ -308,6 +308,7 @@ metadata:
     app: csi-secrets-store
     app.kubernetes.io/name: csi-secrets-store
     app.kubernetes.io/component: csi-driver
+    pci-scope: out-of-scope
 spec:
   selector:
     matchLabels:
@@ -318,6 +319,7 @@ spec:
         app: csi-secrets-store
         app.kubernetes.io/name: csi-secrets-store
         app.kubernetes.io/component: csi-driver
+        pci-scope: out-of-scope
     spec:
       nodeSelector:
         kubernetes.io/os: linux
