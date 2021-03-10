@@ -119,6 +119,7 @@
         "clusterName": "[concat('aks-', variables('subRgUniqueString'))]",
         "logAnalyticsWorkspaceName": "[concat('la-', variables('clusterName'))]",
         "containerInsightsSolutionName": "[concat('ContainerInsights(', variables('logAnalyticsWorkspaceName'),')')]",
+        "vmInsightsSolutionName": "[concat('VMInsights(', variables('logAnalyticsWorkspaceName'),')')]",
         "securityCenterSolutionName": "[concat('SecurityInsights(', variables('logAnalyticsWorkspaceName'),')')]",
         "defaultAcrName": "[concat('acraks', variables('subRgUniqueString'))]",
 
@@ -189,13 +190,18 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachineScaleSets",
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2020-12-01",
             "name": "vmss-jumpboxes",
             "comments": "Hosts the VMs used as AKS jumpboxes. Using VMSS as a way to manage spanning fault and update domains.",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]",
+                "[resourceId('Microsoft.OperationsManagement/solutions', variables('vmInsightsSolutionName'))]"
+            ],
             "location": "[parameters('location')]",
             "zones": ["1", "2", "3"],
             "sku": {
                 "name": "Standard_DS1_v2",
+                "tier": "Standard",
                 "capacity": 2
             },
             "properties": {
@@ -230,9 +236,6 @@
                         },
                         "customData": "[parameters('jumpBoxCloudInitAsBase64')]",
                         "adminUsername": "[variables('jumpBoxDefaultAdminUserName')]"
-                    },
-                    "extensionProfile": {
-                        "extensions": []
                     },
                     "storageProfile": {
                         "osDisk": {
@@ -274,7 +277,47 @@
                         ]
                     }
                 }
-            }  
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "OMSExtension",
+                    "apiVersion": "2019-12-01",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachineScaleSets', 'vmss-jumpboxes')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "OmsAgentForLinux",
+                        "typeHandlerVersion": "1.13",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "stopOnMultipleConnections": true,
+                            "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', 'vmss-jumpboxes')]",
+                            "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName')), '2020-10-01').customerId]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName')), '2020-10-01').primarySharedKey]"
+                        }
+                    }
+                },
+                {
+                    "type": "extensions",
+                    "apiVersion": "2019-12-01",
+                    "name": "DependencyAgentLinux",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachineScaleSets', 'vmss-jumpboxes')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+                        "type": "DependencyAgentLinux",
+                        "typeHandlerVersion": "9.10",
+                        "autoUpgradeMinorVersion": true
+                    }
+                }
+            ]
         },
         {
             "name": "podmi-ingress-controller",
@@ -992,6 +1035,24 @@
             "plan": {
                 "name": "[variables('containerInsightsSolutionName')]",
                 "product": "OMSGallery/ContainerInsights",
+                "promotionCode": "",
+                "publisher": "Microsoft"
+            }
+        },
+        {
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[variables('vmInsightsSolutionName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]"
+            ],
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsWorkspaceName'))]"
+            },
+            "plan": {
+                "name": "[variables('vmInsightsSolutionName')]",
+                "product": "OMSGallery/VMInsights",
                 "promotionCode": "",
                 "publisher": "Microsoft"
             }

@@ -939,6 +939,24 @@
                                         "*.github.io",
                                         "raw.githubusercontent.com"
                                     ]
+                                },
+                                {
+                                    "name": "azure-monitor-addon",
+                                    "description": "Required for Azure Monitor Extension on Jumpbox.",
+                                    "sourceIpGroups": [
+                                        "[resourceId('Microsoft.Network/ipGroups', variables('aksJumpBoxIpGroupName'))]"
+                                    ],
+                                    "protocols": [
+                                        {
+                                            "protocolType": "Https",
+                                            "port": 443
+                                        }
+                                    ],
+                                    "targetFqdns": [
+                                        "*.ods.opinsights.azure.com",
+                                        "*.oms.opinsights.azure.com",
+                                        "[concat(parameters('location'), '.monitoring.azure.com')]"
+                                    ]
                                 }
                             ]
                         }
