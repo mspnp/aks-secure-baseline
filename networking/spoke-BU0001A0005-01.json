@@ -176,9 +176,9 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2020-05-01",
-            "name": "[concat('nsg-', variables('clusterVNetName'), '-nodepools')]",
+            "name": "[concat('nsg-', variables('clusterVNetName'), '-system-nodepools')]",
             "location": "[parameters('location')]",
-            "comments": "Default NSG on the AKS nodepools. Feel free to constrict further both inbound and outbound!",
+            "comments": "NSG on all AKS system nodepools. Feel free to constrict further both inbound and outbound!",
             "properties": {
                 "securityRules": [
                     {
@@ -203,7 +203,103 @@
                     "apiVersion": "2017-05-01-preview",
                     "name": "Microsoft.Insights/toHub",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-nodepools'))]"
+                        "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-system-nodepools'))]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[variables('hubLaWorkspaceResourceId')]",
+                        "logs": [
+                            {
+                                "category": "NetworkSecurityGroupEvent",
+                                "enabled": true
+                            },
+                            {
+                                "category": "NetworkSecurityGroupRuleCounter",
+                                "enabled": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[concat('nsg-', variables('clusterVNetName'), '-is-nodepools')]",
+            "location": "[parameters('location')]",
+            "comments": "NSG on the AKS in-scope nodepools. Feel free to constrict further both inbound and outbound!",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "DenySshInBound",
+                        "properties": {
+                            "description": "No SSH access allowed to nodes.",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "Microsoft.Insights/toHub",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-is-nodepools'))]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[variables('hubLaWorkspaceResourceId')]",
+                        "logs": [
+                            {
+                                "category": "NetworkSecurityGroupEvent",
+                                "enabled": true
+                            },
+                            {
+                                "category": "NetworkSecurityGroupRuleCounter",
+                                "enabled": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-05-01",
+            "name": "[concat('nsg-', variables('clusterVNetName'), '-oos-nodepools')]",
+            "location": "[parameters('location')]",
+            "comments": "NSG on the AKS out-of-scope nodepools. Feel free to constrict further both inbound and outbound!",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "DenySshInBound",
+                        "properties": {
+                            "description": "No SSH access allowed to nodes.",
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "Microsoft.Insights/toHub",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-oos-nodepools'))]"
                     ],
                     "properties": {
                         "workspaceId": "[variables('hubLaWorkspaceResourceId')]",
@@ -506,20 +602,7 @@
                             "priority": 140,
                             "direction": "Outbound"
                         }
-                    }/*,
-                    {
-                        "name": "AllowAllOutBound",
-                        "properties": {
-                            "protocol": "*",
-                            "sourcePortRange": "*",
-                            "sourceAddressPrefix": "*",
-                            "destinationPortRange": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 1000,
-                            "direction": "Outbound"
-                        }
-                    }*/
+                    }
                 ]
             },
             "resources": [
@@ -555,7 +638,9 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-appgw'))]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-nodepools'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-system-nodepools'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-is-nodepools'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-oos-nodepools'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-aksilbs'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-management-ops'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-privatelinkendpoints'))]",
@@ -576,7 +661,7 @@
                                 "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
                             },
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-nodepools'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-system-nodepools'))]"
                             },
                             "privateEndpointNetworkPolicies": "Disabled",
                             "privateLinkServiceNetworkPolicies": "Disabled"
@@ -587,7 +672,7 @@
                         "properties": {
                             "addressPrefix": "10.240.12.0/22",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-nodepools'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-is-nodepools'))]"
                             },
                             "routeTable": {
                                 "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
@@ -601,7 +686,7 @@
                         "properties": {
                             "addressPrefix": "10.240.16.0/22",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-nodepools'))]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-', variables('clusterVNetName'), '-oos-nodepools'))]"
                             },
                             "routeTable": {
                                 "id": "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
