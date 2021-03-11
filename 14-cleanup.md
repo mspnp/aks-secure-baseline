@@ -38,4 +38,4 @@ After you are done exploring your deployed [AKS Baseline Cluster for Regulated W
 
 ### Next step
 
-:arrow_forward: [Review additional information in the main README](./README.md#broom-clean-up-resources)
+:arrow_forward: [Back to main README](./README.md)

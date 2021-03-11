@@ -80,6 +80,6 @@ The example workload uses the standard dotnet logger interface, which are captur
    | order by TimeGenerated desc
    ```
 
-## Next step
+### Next step
 
 :arrow_forward: [Clean Up Azure Resources](./14-cleanup.md)
