@@ -80,6 +80,42 @@ The example workload uses the standard dotnet logger interface, which are captur
    | order by TimeGenerated desc
    ```
 
+## Cluster Access Logs
+
+This reference implementation logs all AKS control plane interactions in the associated Log Analytics workspace. Specifically this is enabled through the use of `kube-audit-admin` Diagnostics setting that was enabled on the cluster.
+
+### Steps
+
+1. In the Azure Portal, navigate to your AKS cluster resource group (`rg-bu0001a0005`).
+1. Select your Log Analytic Workspace resource.
+1. Execute the following query.
+
+   ```
+   AzureDiagnostics 
+   | where Category == 'kube-audit-admin'
+   | order by TimeGenerated desc 
+   ```
+
+This returns all Kubernetes API Server interaction happening in your cluster, OTHER than most `GET` requests. Basically any interaction that might potentially have the capability to modifying the system. Even an "idle" cluster can fill this log quickly (don't be surprised to see over 200 messages in a 30 minute window). Most regulations do not require it, but if you disable `kube-audit-admin` and instead simply enable `kube-audit` the system will _also_ log all of the `GET` (read) requests as well. This will _dramatically_ increase the number of logs, but you will then see 100% of the requests to the API Server. Never enable both at the same time.
+
+## Azure Policy Changes
+
+Azure policy definitions sync with your cluster about once every 15 minutes. To see when they sync you can execute the following query.
+
+```
+ContainerLog
+| where Image contains "policy-kubernetes-addon"
+| where LogEntry contains "Syncing policies with cluster"
+| order by TimeGenerated desc 
+```
+
+And audit results will be sent to Azure Policy about once every 30 minutes. To see when they sync you can execute the following query.
+
+ContainerLog
+| where Image contains "policy-kubernetes-addon"
+| where LogEntry contains "Sending audit result"
+| order by TimeGenerated desc 
+
 ### Next step
 
 :arrow_forward: [Clean Up Azure Resources](./14-cleanup.md)
