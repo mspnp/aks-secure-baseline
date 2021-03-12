@@ -26,6 +26,16 @@ Observability into your network is critical for compliance. [Network Watcher](ht
 
 In addition to Network Watcher aiding in compliance considerations, it's also a highly valuable network troubleshooting utility. As your network is private and heavy with flow restrictions, troubleshooting network flow issues can be time consuming. Network Watcher can help provide additional insight when other troubleshooting means are not sufficient.
 
+## Make use of container securityContext options
+
+When describing your workload's security needs, leverage all relevant [`securityContext` settings](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for your containers. This includes basic items like `fsGroup`, `runAsUser` / `runAsGroup`, and setting `allowPriviledgeEscalation` to `false` (unless required). But it also means being explicit about defining/removing Linux `capabilities` and defining your SELinux options in `seLinuxOptions`. The workloads deployed in this reference implementation do NOT represent best practices, as this reference implementation was mainly infrastructure focused.
+
+## Customized Azure Policies
+
+Generally speaking, the Azure Policies applied do not have workload-tuned settings applied. Specifically we're applying the **Kubernetes cluster pod security restricted standards for Linux-based workloads** initiative which does not allow tuning of settings. Consider exporting this initiative and customizing its values for your specific workload. You may wish to include all Gatekeeper `deny` Azure Policies under one custom Initiative and all `audit` Azure Policies under another to know strong "blocks" from "awareness only" policies.
+
+While it's common for Azure Policy to exclude `kube-system` and `gatekeeper-system` to policies, consider _including_ them in your `audit` policies for _added visibility_. Including those namespaces in `deny` policies could cause cluster failure due to an unsupported configuration. You may find some that are relatively safe, such as enforcing internal load balancers and HTTPS ingresses, but be aware if you apply these you may run into support concerns.
+
 ## Management Groups
 
 This reference implementation is expected to be deployed in a standalone subscription.  As such, Azure Policies are applied at a relatively local scope (subscription or resource group). If you have multiple subscriptions that will be under regulatory compliance, consider grouping them under a [management group hierarchy](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/management-group-and-subscription-organization) that applies the relevant Azure Policies uniformly across your in-scope subscriptions.
